@@ -1,4 +1,4 @@
-import 'dart:math';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
@@ -49,7 +49,7 @@ class _FlipCoinState extends State<FlipCoin>
       ],
     );
 
-    final angle = dragPosition / 180 * pi;
+    final angle = dragPosition / 180 * math.pi;
     final transform = Matrix4.identity()
       ..setEntry(3, 2, 0.001)
       ..rotateY(angle);
@@ -74,7 +74,7 @@ class _FlipCoinState extends State<FlipCoin>
           child: isFront
               ? front
               : Transform(
-                  transform: Matrix4.identity()..rotateY(pi),
+                  transform: Matrix4.identity()..rotateY(math.pi),
                   alignment: Alignment.center,
                   child: widget.back)),
     );

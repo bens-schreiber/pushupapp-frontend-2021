@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pushupapp/pages/home.dart';
+import 'package:pushupapp/base.dart' as base;
 
 void main() => runApp(const App());
 
@@ -11,7 +11,13 @@ class App extends StatelessWidget {
     return MaterialApp(
         title: "Pushup App",
         theme: ThemeData(
-            scaffoldBackgroundColor: Colors.grey[900], fontFamily: "Helvetica"),
-        home: const HomePage());
+            scaffoldBackgroundColor: Colors.grey[900], fontFamily: "Helvetica"
+        ),
+
+        // Application
+        home: const base.BaseLayout()
+
+    );
   }
 }
+

@@ -11,10 +11,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
+  int _currentIndex = 1;
+  final List _groups = const [widgets.FlipCoin(), widgets.FlipCoin(), widgets.FlipCoin()];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       // Main homepage contents
       body: Center(
           child: Column(
@@ -24,21 +27,39 @@ class _HomePageState extends State<HomePage> {
 
               // Main body of home page
               children: [
+                Text(_currentIndex.toString()),
 
                 const Spacer(), // Spacing
 
-                // Centered "Flip Coin" widget
+                // Centered Flip Coin widget
                 Padding(
                   padding: const EdgeInsets.only(top: 40, bottom: 40),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Icon(Icons.arrow_back_ios, color: Colors.grey[600]),
-                      const widgets.FlipCoin(),
-                      Icon(Icons.arrow_forward_ios, color: Colors.grey[600])
-                    ],
-                  ),
-                ),
+
+                      // Back coin button
+                      IconButton(
+                        icon: Icon(Icons.arrow_back_ios, color: Colors.grey[600]),
+                        onPressed: () {
+                          if (_currentIndex != 0) {
+                            setState(() {
+                              _currentIndex--;
+                            });
+                          }}),
+
+                      _groups[_currentIndex],   // Coin widget
+
+                      // Forward coin button
+                      IconButton(
+                        icon: Icon(Icons.arrow_forward_ios, color: Colors.grey[600]),
+                        onPressed: () {
+                          if (_currentIndex < (_groups.length - 1)) {
+                            setState(() {
+                              _currentIndex++;
+                            });
+                          }})
+                    ])),
 
                 const Spacer(), // Spacing
 
@@ -52,8 +73,7 @@ class _HomePageState extends State<HomePage> {
                   padding: EdgeInsets.all(8.0),
                   child: widgets.GroupInfo(),
                 ),
-
               ])),
-    );
+        );
   }
 }

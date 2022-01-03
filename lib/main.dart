@@ -6,7 +6,8 @@ import 'package:pushupapp/api/requests.dart';
 void main() async {
   API api = await API.initialize("test", "123");
   print(api.token);
-  print(await api.get().healthCheck());
+  await api.get().groups();
+  print(api.groups);
   // runApp(const App());
 }
 

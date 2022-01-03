@@ -17,7 +17,7 @@ class API {
   //todo: groups
   static Future<API> initialize(String username, String password) async {
     try {
-      String token = await Post().login(username, password);
+      String token = await Post._login(username, password);
       return API._(List.empty(), token, username);
     } on Exception { rethrow; }
   }
@@ -25,14 +25,17 @@ class API {
   // Private constructor
   API._(this.groups, this.token, this.username);
 
-  post() => Post();
-  del() => Del();
-  get() => Get();
+  post() => Post(this);
+  del() => Del(this);
+  get() => Get(this);
 }
 
 class Post {
+
+  final API api;
+  Post(this.api);
   
-  Future<String> login(String username, String password) async {
+  static Future<String> _login(String username, String password) async {
     var res = await http.post(_parseUri("client/login"),
         headers: ({
           "Username": username,
@@ -46,16 +49,48 @@ class Post {
     var body = json.decode(res.body);
     return body["token"];
   }
+
+  static Future<String> register(String username, String password) async {
+    var res = await http.post(_parseUri("client/register"),
+        headers: ({
+          "Username": username,
+          "Password": password
+        }));
+
+    if (res.statusCode != 201) {
+      throw he.HttpException(res.statusCode);
+    }
+
+    var body = json.decode(res.body);
+    return body["token"];
+  }
+
+  
 }
 
 class Del {
-
+  final API api;
+  Del(this.api);
 }
 
 class Get {
+  final API api;
+  Get(this.api);
+
   Future<int> healthCheck() async {
     var res = await http
         .get(_parseUri("healthcheck"), headers: {"Accept" : "application/json"});
     return res.statusCode;
+  }
+  
+  void groups() async {
+    var res = await http.get(_parseUri("group/" +  api.username),
+        headers: ({
+          "Username" : api.username,
+          "Token": api.token
+    }));
+
+    // lol what the fuck
+    api.groups = List<pojos.Group>.from(json.decode(res.body).map((x) => pojos.Group.fromJson(x)));
   }
 }

@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:pushupapp/base.dart' as base;
+import 'package:pushupapp/ui/base.dart' as base;
+import 'package:pushupapp/api/requests.dart';
 
-void main() => runApp(const App());
+
+void main() async {
+  API api = await API.initialize("test", "123");
+  print(api.token);
+  print(await api.get().healthCheck());
+  // runApp(const App());
+}
 
 class App extends StatelessWidget {
   const App({Key? key}) : super(key: key);

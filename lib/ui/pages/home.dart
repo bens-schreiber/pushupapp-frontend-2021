@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:pushupapp/pages/widgets/button.dart' as widgets;
-import 'package:pushupapp/pages/widgets/coin.dart' as widgets;
-import 'package:pushupapp/pages/widgets/groupinfo.dart' as widgets;
+import 'package:pushupapp/ui/pages/widgets/pushupbutton.dart' as widgets;
+import 'package:pushupapp/ui/pages/widgets/coin.dart' as widgets;
+import 'package:pushupapp/ui/pages/widgets/groupinfo.dart' as widgets;
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -13,7 +13,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
 
   int _currentIndex = 1;
-  final List _groups = const [widgets.FlipCoin(), widgets.FlipCoin(), widgets.FlipCoin()];
+  final List _coins = [widgets.Coin(1), widgets.Coin(2), widgets.Coin(3)];
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +27,6 @@ class _HomePageState extends State<HomePage> {
 
               // Main body of home page
               children: [
-                Text(_currentIndex.toString()),
 
                 const Spacer(), // Spacing
 
@@ -48,13 +47,13 @@ class _HomePageState extends State<HomePage> {
                             });
                           }}),
 
-                      _groups[_currentIndex],   // Coin widget
+                      _coins[_currentIndex],   // Coin widget
 
                       // Forward coin button
                       IconButton(
                         icon: Icon(Icons.arrow_forward_ios, color: Colors.grey[600]),
                         onPressed: () {
-                          if (_currentIndex < (_groups.length - 1)) {
+                          if (_currentIndex < (_coins.length - 1)) {
                             setState(() {
                               _currentIndex++;
                             });

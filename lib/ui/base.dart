@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pushupapp/pages/home.dart' as pages;
+import 'package:pushupapp/ui/pages/home.dart' as pages;
 
 class BaseLayout extends StatefulWidget {
   const BaseLayout({Key? key}) : super(key: key);

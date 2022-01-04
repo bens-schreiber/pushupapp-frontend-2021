@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:http/http.dart' as http;
-import 'package:pushupapp/api/pojos.dart' as pojos;
+import 'package:pushupapp/api/pojos.dart' as pojo;
 import 'package:pushupapp/api/httpexceptions.dart' as he;
 import 'dart:convert';
 
@@ -8,9 +8,8 @@ Uri _parseUri(String i) => Uri.parse("https://puappapi.dev/api/" + i);
 
 // Cached API variables
 class API {
-  static List<pojos.Group> groups = List.empty();
-  static String token = "";
-  static String username = "";
+  static late String token;
+  static late String username;
 
   // Main constructor, return an instance of the API given a successful login
   static Future<void> initialize(String username, String password) async {
@@ -82,13 +81,11 @@ class _Post {
     }
   }
 
-  Future<void> coin() async {
-    // Option to update coin wont appear unless user is a coin holder, null check
-    // is unnecessary.
-    String id = "";
+  Future<void> coin(List<pojo.Group> groups) async {
+    late String id;
 
     // Find ID of group the user is creator of
-    for (pojos.Group g in API.groups) {
+    for (pojo.Group g in groups) {
       if (g.coinHolder == API.username) {
         id = g.id;
       }
@@ -105,13 +102,11 @@ class _Post {
 
 // HTTP Delete methods
 class _Del {
-  Future<void> disband() async {
-    // Option to disband wont appear unless user is a creator, null check
-    // is unnecessary
-    String id = "";
+  Future<void> disband(List<pojo.Group> groups) async {
+    late String id;
 
     // Find ID of group the user is creator of
-    for (pojos.Group g in API.groups) {
+    for (pojo.Group g in groups) {
       if (g.creator == API.username) {
         id = g.id;
       }
@@ -125,13 +120,11 @@ class _Del {
     }
   }
 
-  Future<void> kick(String user) async {
-    // Option to disband wont appear unless user is a creator, null check
-    // is unnecessary
-    String id = "";
+  Future<void> kick(String user, List<pojo.Group> groups) async {
+    late String id;
 
     // Find ID of group the user is creator of
-    for (pojos.Group g in API.groups) {
+    for (pojo.Group g in groups) {
       if (g.creator == API.username) {
         id = g.id;
       }
@@ -159,16 +152,16 @@ class _Get {
     return res.statusCode;
   }
 
-  Future<void> groups() async {
+  Future<List<pojo.Group>> groups() async {
+    print("API CALL!!!!");
     var res = await http.get(_parseUri("group/" + API.username),
         headers: ({"Username": API.username, "Token": API.token}));
 
     if (res.statusCode != 200) {
       throw he.HttpException(res.statusCode);
     }
-
-    // Cache resuls
-    API.groups = List<pojos.Group>.from(
-        json.decode(res.body).map((x) => pojos.Group.fromJson(x)));
+    
+    return List<pojo.Group>.from(
+        json.decode(res.body).map((x) => pojo.Group.fromJson(x)));
   }
 }

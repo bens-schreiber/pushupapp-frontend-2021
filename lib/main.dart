@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:pushupapp/ui/base.dart' as base;
+import 'package:pushupapp/ui/pages/base.dart' as base;
 import 'package:pushupapp/api/requests.dart';
 
 
+//todo: coin update not always updating (probably has to do with it randomly selecting the same user)
 void main() async {
-  API api = await API.initialize("test", "123");
-  print(api.token);
-  await api.get().groups();
-  print(api.groups);
-  // runApp(const App());
+  // await API.initialize("test", "123");
+
+  runApp(const App());
 }
 
 class App extends StatelessWidget {

@@ -1,25 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:pushupapp/api/pojos.dart' as pojo;
-import 'package:pushupapp/api/requests.dart';
-import 'package:pushupapp/ui/pages/widgets/index.dart' as widgets;
+import 'package:pushupapp/api/pojo.dart' as pojo;
+import 'package:pushupapp/ui/widgets/index.dart' as widgets;
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  final List<pojo.Group> _groups;
+  const HomePage(this._groups, {Key? key}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-
-  late Future<List<pojo.Group>> groups;
-
+  
+  late int _displayingIndex;
+  
   @override
   void initState() {
     super.initState();
-
-    // Request for groups everytime the page is initialized
-    groups = API.get().groups();
+    _displayingIndex = widget._groups.length > 2 ? 1 : 0;
   }
 
   @override
@@ -38,19 +36,7 @@ class _HomePageState extends State<HomePage> {
                 const Spacer(), // Spacing
 
                 // Centered Flip Coin widget
-                Padding(
-                  padding: const EdgeInsets.only(top: 40, bottom: 40),
-                  child: FutureBuilder(
-                    future: groups,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        return widgets.CenterDisplay(
-                            snapshot.data as List<pojo.Group>);
-                      } return (Text("bruh"));
-                    }
-
-                  )
-                  ),
+                widgets.CenterDisplay(groups: widget._groups, onPageUpdated: _onPageUpdated, index: _displayingIndex),
 
                 const Spacer(), // Spacing
 
@@ -60,11 +46,17 @@ class _HomePageState extends State<HomePage> {
                     child: widgets.PushupButton()),
 
                 // Group information widget
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: widgets.GroupInfo(),
+                 Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: widgets.GroupInfo(widget._groups[_displayingIndex]),
                 ),
               ])),
         );
+  }
+  
+  void _onPageUpdated(int page) {
+    setState(() {
+      _displayingIndex = page;
+    });
   }
 }

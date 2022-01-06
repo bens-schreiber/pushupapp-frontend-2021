@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:pushupapp/ui/pages/base.dart' as base;
+import 'package:pushupapp/api/pojo.dart' as pojo;
+import 'package:pushupapp/ui/pages/index.dart' as pages;
 import 'package:pushupapp/api/requests.dart';
 
 
 //todo: coin update not always updating (probably has to do with it randomly selecting the same user)
-void main() async {
-  await API.initialize("test", "123");
-  await API.post().join("23c9f92e-e0cd-4e93-9ec0-312de0a27f12");
-
+void main() {
   runApp(const App());
 }
 
 class App extends StatelessWidget {
+
   const App({Key? key}) : super(key: key);
 
   @override
@@ -23,7 +22,21 @@ class App extends StatelessWidget {
         ),
 
         // Application
-        home: const base.BaseLayout()
+        home: FutureBuilder(
+          future: API.initialize("test", "123"),
+          builder: (context, snap) {
+            if (snap.data == null) {
+              return const pages.LoadPage();
+            } return FutureBuilder(
+                future: API.get().groups(),
+                builder: (context, snap) {
+                  if (snap.data == null) {
+                    return const pages.LoadPage();
+                  } return pages.BaseLayout("test", snap.data as List<pojo.Group>);
+                }
+            );
+          }
+        )
 
     );
   }

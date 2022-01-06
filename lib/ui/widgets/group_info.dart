@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:pushupapp/api/pojo.dart' as pojos;
 
 final TextStyle _basic = TextStyle(fontSize: 13, color: Colors.grey[600]);
 
-class GroupInfo extends StatefulWidget {
-  const GroupInfo({Key? key}) : super(key: key);
+class GroupInfo extends StatelessWidget {
+  final pojos.Group group;
+  const GroupInfo(this.group, {Key? key}) : super(key: key);
 
-  @override
-  State<GroupInfo> createState() => _GroupInfoState();
-}
-
-class _GroupInfoState extends State<GroupInfo> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -42,7 +39,7 @@ class _GroupInfoState extends State<GroupInfo> {
                   ),
                   Text("Current Coin Holder", style: _basic),
                   const Spacer(),
-                  Text("tim", style: _basic)
+                  Text(group.coinHolder, style: _basic)
                 ]),
 
                 // third field
@@ -53,7 +50,7 @@ class _GroupInfoState extends State<GroupInfo> {
                   ),
                   Text("Group Creator", style: _basic),
                   const Spacer(),
-                  Text("tim", style: _basic)
+                  Text(group.creator, style: _basic)
                 ]),
 
                 Row(children: [

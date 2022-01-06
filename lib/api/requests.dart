@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:http/http.dart' as http;
-import 'package:pushupapp/api/pojos.dart' as pojo;
+import 'package:pushupapp/api/pojo.dart' as pojo;
 import 'package:pushupapp/api/httpexceptions.dart' as he;
 import 'dart:convert';
 
@@ -12,24 +12,24 @@ class API {
   static late String username;
 
   // Main constructor, return an instance of the API given a successful login
-  static Future<void> initialize(String username, String password) async {
+  static Future<he.Status> initialize(String username, String password) async {
     try {
       String token = await _Post._login(username, password);
       API.token = token;
       API.username = username;
+      return he.Status.ok;
     } on Exception {
       rethrow;
     }
   }
 
   // Secondary constructor, create an account then call main constructor
-  static Future<void> newUser(String username, String password) async {
+  static Future<he.Status> newUser(String username, String password) async {
     try {
       // Create a new account
       await _Post._register(username, password);
+      return he.Status.ok;
 
-      // Login and return API
-      initialize(username, password);
     } on Exception {
       rethrow;
     }

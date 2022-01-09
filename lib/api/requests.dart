@@ -47,6 +47,7 @@ class _Post {
         headers: ({"Username": username, "Password": password}));
 
     if (res.statusCode != 201) {
+      print(res.statusCode);
       throw he.HttpException(res.statusCode);
     }
 

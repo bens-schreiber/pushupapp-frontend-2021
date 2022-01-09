@@ -5,7 +5,8 @@ enum Status {
   unauthorized,
   forbidden,
   notFound,
-  ratelimit
+  ratelimit,
+  internal
 }
 
 class HttpException implements Exception {
@@ -31,6 +32,8 @@ class HttpException implements Exception {
         return Status.notFound;
       case 429:
         return Status.ratelimit;
+      case 500:
+        return Status.internal;
     }
   }
 

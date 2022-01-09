@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pushupapp/api/pojo.dart' as pojos;
 
-final TextStyle _basic = TextStyle(fontSize: 13, color: Colors.grey[600]);
+TextStyle _basic({double fontSize = 15}) => TextStyle(fontSize: fontSize, color: Colors.grey[600]);
 
 class GroupInfo extends StatelessWidget {
   final pojos.Group group;
@@ -9,6 +9,8 @@ class GroupInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+
     return Container(
 
       color: Colors.grey[850],  // Background color
@@ -23,46 +25,45 @@ class GroupInfo extends StatelessWidget {
 
           child: Column(
 
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,  // alignment
+              mainAxisAlignment: MainAxisAlignment.spaceAround,  // alignment
               children: [
 
                 // first field
-                Text("Group Info", style: _basic),
+                Text(group.creator + "'s Group", style: _basic(fontSize: 17)),
+
+
+                Padding(
+                  padding: const EdgeInsets.only(top: 1),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children:
+                      group.members.map((user) => Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [Icon(Icons.account_circle_rounded, color: Colors.grey[600]), Text(user, style: _basic())],)
+                      ).toList())
+                ),
 
                 Divider(color: Colors.grey[600], thickness: .65),
 
-                // second field
                 Row(children: [
                   Padding(
                     padding: const EdgeInsets.only(right: 5),
                     child: Icon(Icons.security_update_warning, color: Colors.grey[600]),
                   ),
-                  Text("Current Coin Holder", style: _basic),
+                  Text("Current Coin Holder", style: _basic()),
                   const Spacer(),
-                  Text(group.coinHolder, style: _basic)
-                ]),
-
-                // third field
-                Row(children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 5),
-                    child: Icon(Icons.manage_accounts_rounded, color: Colors.grey[600]),
-                  ),
-                  Text("Group Creator", style: _basic),
-                  const Spacer(),
-                  Text(group.creator, style: _basic)
+                  Text(group.coinHolder, style: _basic())
                 ]),
 
                 Row(children: [
                   Padding(
                     padding: const EdgeInsets.only(right: 5),
-                    child: Icon(Icons.assignment_rounded, color: Colors.grey[600]),
+                    child: Icon(Icons.account_balance, color: Colors.grey[600]),
                   ),
-                  Text("Total Pushups", style: _basic),
+                  Text("Total Group Pushups", style: _basic()),
                   const Spacer(),
-                  Text("999", style: _basic)
-                ])
-
+                  Text("999", style: _basic())
+                ]),
 
               ]),
         ),

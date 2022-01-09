@@ -1,3 +1,4 @@
-export 'package:pushupapp/ui/pages/home.dart';
-export 'package:pushupapp/ui/pages/load.dart';
-export 'package:pushupapp/ui/pages/base.dart';
+export 'home.dart';
+export 'load.dart';
+export 'base.dart';
+export 'login.dart';

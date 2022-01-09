@@ -33,21 +33,18 @@ class _HomePageState extends State<HomePage> {
               // Main body of home page
               children:  [
 
-                const Spacer(), // Spacing
-
                 // Centered Flip Coin widget
                 widgets.CenterDisplay(groups: widget._groups, onPageUpdated: _onPageUpdated, index: _displayingIndex),
 
-                const Spacer(), // Spacing
-
                 // Pushup button widget
-                const Padding(
-                    padding: EdgeInsets.only(left: 8, right: 8),
-                    child: widgets.PushupButton()),
+                Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: widgets.GlowingButton(text: "Do Pushups", onPressed: (() {return 1;}))
+                ),
 
                 // Group information widget
                  Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(10.0),
                   child: widgets.GroupInfo(widget._groups[_displayingIndex]),
                 ),
               ])),

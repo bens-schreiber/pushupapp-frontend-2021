@@ -8,7 +8,10 @@ class LoadPage extends StatelessWidget {
     return Scaffold(
         body: Container(
             child: const Center(
-                child: Image(image: AssetImage("assets/logoback.png"))),
+                child: SizedBox(
+                    height: 250,
+                    width: 250,
+                    child: FittedBox(child: Image(image: AssetImage("assets/logoback.png"))))),
             decoration: const BoxDecoration(
                 gradient: LinearGradient(
                     begin: Alignment.topCenter,

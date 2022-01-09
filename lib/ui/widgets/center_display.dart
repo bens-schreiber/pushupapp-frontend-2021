@@ -28,22 +28,29 @@ class _CenterDisplayState extends State<CenterDisplay> {
     }
 
     _pageController = PageController(
-      initialPage: widget.index
+      initialPage: widget.index,
+      viewportFraction: 0.9
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 270,
-      width: 250,
-      child: PageView(
-        controller: _pageController,
-        children: _coins,
-        scrollDirection: Axis.vertical,
-        onPageChanged: widget.onPageUpdated,
+    return Column(
+      children: [
+        FittedBox(
+          child: SizedBox(
+            height: 386,
+            width: 250,
+            child: PageView(
+              controller: _pageController,
+              children: _coins,
+              scrollDirection: Axis.vertical,
+              onPageChanged: widget.onPageUpdated,
 
-      ),
+            ),
+          ),
+        ),
+      ],
     );
 
   }

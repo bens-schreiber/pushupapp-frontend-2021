@@ -28,6 +28,7 @@ class _BaseLayoutState extends State<BaseLayout> {
       toolbarHeight: 40,
       elevation: 0.0,
       title: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Icon(Icons.account_circle_rounded, size: 20),
           Padding(
@@ -35,7 +36,7 @@ class _BaseLayoutState extends State<BaseLayout> {
             child: Text(widget._username, style: const TextStyle(fontSize: 15)),
           ),
           const Spacer(),
-          const Text("Push Up Challenge", style: TextStyle(fontSize: 15))
+          const Text("iPushup", style: TextStyle(fontSize: 15))
         ],
       ),
       backgroundColor: Colors.grey[850],

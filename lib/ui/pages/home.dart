@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pushupapp/api/pojo.dart' as pojo;
+import 'package:pushupapp/api/requests.dart';
 import 'package:pushupapp/ui/widgets/index.dart' as widgets;
 
 class HomePage extends StatefulWidget {
@@ -24,30 +25,34 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context)  {
     return Scaffold(
       // Main homepage contents
-      body: Center(
-          child: Column(
-              // Column Alignment
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.max,
+      body: Column(
+          // Column Alignment
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
 
-              // Main body of home page
-              children:  [
+          // Main body of home page
+          children:  [
 
-                // Centered Flip Coin widget
-                widgets.CenterDisplay(groups: widget._groups, onPageUpdated: _onPageUpdated, index: _displayingIndex),
+            // Centered Flip Coin widget
+            widgets.CenterDisplay(groups: widget._groups, onPageUpdated: _onPageUpdated, index: _displayingIndex),
 
-                // Pushup button widget
-                Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: widgets.GlowingButton(text: "Do Pushups", onPressed: (() {return 1;}))
-                ),
+            // Pushup button widget
+            Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: widgets.GlowingButton(
 
-                // Group information widget
-                 Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: widgets.GroupInfo(widget._groups[_displayingIndex]),
-                ),
-              ])),
+                    text: API.username == widget._groups[_displayingIndex].coinHolder
+                          ? "Click to do your pushups!"
+                          : widget._groups[_displayingIndex].coinHolder + " is the coin holder",
+                onPressed: (() {}))
+            ),
+
+            // Group information widget
+             Padding(
+              padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
+              child: widgets.GroupInfo(widget._groups[_displayingIndex]),
+            ),
+          ]),
         );
   }
   
@@ -56,4 +61,5 @@ class _HomePageState extends State<HomePage> {
       _displayingIndex = page;
     });
   }
+
 }

@@ -8,7 +8,7 @@ class GlowingButton extends StatefulWidget {
   final double height;
   final double fontSize;
   const GlowingButton({Key? key, this.height = 48, this.fontSize = 20, required this.text, required this.onPressed}) : super(key: key);
-  
+
   @override
   _GlowingButtonState createState() => _GlowingButtonState();
 }

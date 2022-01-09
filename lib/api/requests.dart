@@ -82,15 +82,7 @@ class _Post {
     }
   }
 
-  Future<void> coin(List<pojo.Group> groups) async {
-    late String id;
-
-    // Find ID of group the user is creator of
-    for (pojo.Group g in groups) {
-      if (g.coinHolder == API.username) {
-        id = g.id;
-      }
-    }
+  Future<void> coin(String id) async {
 
     var res = await http.post(_parseUri("group/coin"),
         headers: ({"Username": API.username, "Token": API.token, "ID": id}));

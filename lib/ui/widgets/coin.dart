@@ -44,7 +44,7 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     Stack front = Stack(
-      alignment: const Alignment(0, 0),
+      alignment: Alignment.center,
       children: [
         _frontImage,
         Text(widget._displayNum.toString(), style: const TextStyle(fontSize: 100, color: Colors.white))

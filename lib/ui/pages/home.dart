@@ -4,8 +4,8 @@ import 'package:pushupapp/api/requests.dart';
 import 'package:pushupapp/ui/widgets/index.dart' as widgets;
 
 class HomePage extends StatefulWidget {
-  final List<pojo.Group> _groups;
-  const HomePage(this._groups, {Key? key}) : super(key: key);
+  late List<pojo.Group> _groups;
+  HomePage(this._groups, {Key? key}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -44,7 +44,7 @@ class _HomePageState extends State<HomePage> {
                     text: API.username == widget._groups[_displayingIndex].coinHolder
                           ? "Click to do your pushups!"
                           : widget._groups[_displayingIndex].coinHolder + " is the coin holder",
-                onPressed: (() {}))
+                onPressed: _updateCoin)
             ),
 
             // Group information widget
@@ -60,6 +60,14 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _displayingIndex = page;
     });
+  }
+  
+  void _updateCoin() {
+    if (API.username == widget._groups[_displayingIndex].coinHolder) {
+      API.post().coin(widget._groups[_displayingIndex].id)
+          .then((value) => API.get().groups()
+          .then((groups) => setState(() {widget._groups = groups;})));
+    }
   }
 
 }

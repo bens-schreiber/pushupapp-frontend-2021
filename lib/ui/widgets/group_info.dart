@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pushupapp/api/pojo.dart' as pojos;
 import 'package:pushupapp/api/requests.dart';
+import 'package:flutter/services.dart';
 
 TextStyle _basic({double fontSize = 15}) =>
     TextStyle(fontSize: fontSize, color: Colors.grey[600]);
@@ -33,9 +34,16 @@ class GroupInfo extends StatelessWidget {
                         style: _basic(fontSize: 17)),
                     IconButton(
                       icon: Icon(Icons.content_copy,
-                          size: 20, color: Colors.grey[600]),
-                      onPressed: () {},
-                    ), //todo: copy id to clipboard, notify
+                          size: 17, color: Colors.grey[600]),
+                      onPressed: () {
+                        Clipboard.setData(ClipboardData(text: group.id))
+                            .then((_) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text("Group code copied.")));
+                        });
+                      },
+                    ),
                   ],
                 ),
               ),

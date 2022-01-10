@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:pushupapp/api/pojo.dart' as pojo;
+import 'package:pushupapp/api/requests.dart';
 import 'package:pushupapp/ui/pages/index.dart' as pages;
 
 class BaseLayout extends StatefulWidget {
-  final String _username;
-  final List<pojo.Group> _groups;
-  const BaseLayout(this._username, this._groups, {Key? key}) : super(key: key);
+  const BaseLayout({Key? key}) : super(key: key);
 
   @override
   _BaseLayoutState createState() => _BaseLayoutState();
@@ -18,7 +16,7 @@ class _BaseLayoutState extends State<BaseLayout> {
     return Scaffold(
       appBar: _appBar(), // Top bar of the application
 
-      body: pages.HomePage(widget._groups),
+      body: const pages.HomePage(),
     );
   }
 
@@ -30,13 +28,13 @@ class _BaseLayoutState extends State<BaseLayout> {
       title: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.account_circle_rounded, size: 20),
+          const Icon(Icons.account_circle_rounded, size: 22),
           Padding(
             padding: const EdgeInsets.only(left: 5),
-            child: Text(widget._username, style: const TextStyle(fontSize: 15)),
+            child: Text(API.username, style: const TextStyle(fontSize: 19)),
           ),
           const Spacer(),
-          const Text("iPushup", style: TextStyle(fontSize: 15))
+          const Text("iPushup", style: TextStyle(fontSize: 19))
         ],
       ),
       backgroundColor: Colors.grey[850],

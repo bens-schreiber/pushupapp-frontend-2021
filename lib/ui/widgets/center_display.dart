@@ -15,26 +15,30 @@ class CenterDisplay extends StatefulWidget {
 
 class _CenterDisplayState extends State<CenterDisplay> {
 
-  final List<Widget> _coins = List.empty(growable: true);
+  late List<Widget> _coins;
   late PageController _pageController;
+  late List<pojo.Group> _groups;
+  late int _index;
 
   @override
-  void initState() {
-    super.initState();
+  Widget build(BuildContext context) {
+
+    // In order to properly refresh the widget on setState()
+    // changeable variables must be declared in build.
+    _coins = List.empty(growable: true);
+    _index = widget.index;
+    _groups = widget.groups;
 
     // Initialize values on coins
-    for (pojo.Group group in widget.groups) {
+    for (pojo.Group group in _groups) {
       _coins.add(FittedBox(child: widgets.Coin(group.coin)));
     }
 
     _pageController = PageController(
-      initialPage: widget.index,
-      viewportFraction: 0.9
+        initialPage: _index,
+        viewportFraction: 0.9
     );
-  }
 
-  @override
-  Widget build(BuildContext context) {
     return Column(
       children: [
         FittedBox(

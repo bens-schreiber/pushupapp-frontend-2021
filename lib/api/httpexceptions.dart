@@ -16,7 +16,7 @@ class HttpException implements Exception {
     status = _statusFromInt(s);
   }
 
-  static Status? _statusFromInt(int status) {
+  static Status _statusFromInt(int status) {
     switch (status) {
       case 200:
         return Status.ok;
@@ -32,7 +32,7 @@ class HttpException implements Exception {
         return Status.notFound;
       case 429:
         return Status.ratelimit;
-      case 500:
+      default:
         return Status.internal;
     }
   }

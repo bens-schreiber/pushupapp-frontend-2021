@@ -14,25 +14,20 @@ class GlowingButton extends StatefulWidget {
 }
 
 class _GlowingButtonState extends State<GlowingButton> {
-  var glowing = false;
+  late String _text;
   var scale = 1.0;
   @override
   Widget build(BuildContext context) {
+
+    // In order to properly refresh the widget on setState()
+    // variables must be declared in build.
+    _text = widget.text;
+
     return GestureDetector(
-      onTapUp: (val) {
-        setState(() {
-          glowing = false;
-        });
-      },
       onTapDown: (val) {
         widget.onPressed();   // Call passed in function
-        setState(() {
-          glowing = true;
-        });
       },
-      child: AnimatedContainer(
-        transform: Matrix4.identity()..scale(scale),
-        duration: const Duration(milliseconds: 200),
+      child: Container(
         height: widget.height,
         width: double.infinity,
         decoration: BoxDecoration(
@@ -42,40 +37,12 @@ class _GlowingButtonState extends State<GlowingButton> {
                 GlowingButton.color1,
                 GlowingButton.color2,
               ],
-            ),
-            boxShadow: glowing
-                ? [
-              BoxShadow(
-                color: GlowingButton.color1.withOpacity(0.6),
-                spreadRadius: 1,
-                blurRadius: 16,
-                offset: const Offset(-8, 0),
-              ),
-              BoxShadow(
-                color: GlowingButton.color2.withOpacity(0.6),
-                spreadRadius: 1,
-                blurRadius: 16,
-                offset: const Offset(8, 0),
-              ),
-              BoxShadow(
-                color: GlowingButton.color1.withOpacity(0.2),
-                spreadRadius: 16,
-                blurRadius: 32,
-                offset: const Offset(-8, 0),
-              ),
-              BoxShadow(
-                color: GlowingButton.color2.withOpacity(0.2),
-                spreadRadius: 16,
-                blurRadius: 32,
-                offset: const Offset(8, 0),
-              )
-            ]
-                : []),
+            )),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              widget.text,
+              _text,
               style: TextStyle(
                   color: Colors.white,
                   fontSize: widget.fontSize,

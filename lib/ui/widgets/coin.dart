@@ -3,11 +3,11 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 class Coin extends StatefulWidget {
-  final int _displayNum;
+  final int displayNum;
   bool _isFront = true;
   double _dragPosition = 0;
 
-  Coin(this._displayNum, {Key? key}) : super(key: key);
+  Coin(this.displayNum, {Key? key}) : super(key: key);
 
   @override
   _CoinState createState() => _CoinState();
@@ -17,6 +17,7 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
 
   final Image _frontImage = const Image(image: AssetImage("assets/logo.png"));
   final Image _back = const Image(image: AssetImage("assets/logoback.png"));
+  late int _displayNum;
 
   late AnimationController _controller;
   late Animation<double> _animation;
@@ -43,11 +44,16 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+
+    // In order to properly refresh the widget on setState()
+    // variables must be declared in build.
+    _displayNum = widget.displayNum;
+
     Stack front = Stack(
       alignment: Alignment.center,
       children: [
         _frontImage,
-        Text(widget._displayNum.toString(), style: const TextStyle(fontSize: 100, color: Colors.white))
+        Text(_displayNum.toString(), style: const TextStyle(fontSize: 100, color: Colors.white))
       ],
     );
 

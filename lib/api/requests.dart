@@ -10,6 +10,7 @@ Uri _parseUri(String i) => Uri.parse("https://puappapi.dev/api/" + i);
 class API {
   static late String token;
   static late String username;
+  static late List<pojo.Group> groups;
 
   // Main constructor, return an instance of the API given a successful login
   static Future<he.Status> initialize(String username, String password) async {
@@ -134,18 +135,16 @@ class _Del {
 
 //HTTP GET methods
 class _Get {
-  Future<int> healthCheck() async {
+  Future<void> healthCheck() async {
     var res = await http
         .get(_parseUri("healthcheck"), headers: {"Accept": "application/json"});
 
     if (res.statusCode != 200) {
       throw he.HttpException(res.statusCode);
     }
-
-    return res.statusCode;
   }
 
-  Future<List<pojo.Group>> groups() async {
+  Future<he.Status?> groups() async {
     print("API CALL!!!!");
     var res = await http.get(_parseUri("group/" + API.username),
         headers: ({"Username": API.username, "Token": API.token}));
@@ -153,8 +152,10 @@ class _Get {
     if (res.statusCode != 200) {
       throw he.HttpException(res.statusCode);
     }
-    
-    return List<pojo.Group>.from(
+
+    API.groups = List<pojo.Group>.from(
         json.decode(res.body).map((x) => pojo.Group.fromJson(x)));
+
+    return he.HttpException(res.statusCode).status;
   }
 }

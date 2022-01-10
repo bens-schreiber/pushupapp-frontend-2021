@@ -40,6 +40,7 @@ class GroupInfo extends StatelessWidget {
                             .then((_) {
                           ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
+                                  duration: Duration(milliseconds: 500),
                                   content: Text("Group code copied.")));
                         });
                       },
@@ -47,9 +48,9 @@ class GroupInfo extends StatelessWidget {
                   ],
                 ),
               ),
-              Divider(color: Colors.grey[600], thickness: .65),
+              SizedBox(height: 20, child: Divider(color: Colors.grey[600], thickness: .65)),
               SizedBox(
-                height: 51,
+                height: 50,
                 child: Column(
                   children: [
                     Expanded(
@@ -59,6 +60,8 @@ class GroupInfo extends StatelessWidget {
                   ],
                 ),
               ),
+
+              Text("Created by Ben Schreiber", style: _basic(fontSize: 13))
             ]),
       ),
     );
@@ -89,7 +92,7 @@ class GroupInfo extends StatelessWidget {
   }
 
   List<List> _chunk(List list) {
-    int chunkSize = 3;
+    int chunkSize = 4;
     List<List> chunks = [];
     int len = list.length;
     for (var i = 0; i < len; i += chunkSize) {

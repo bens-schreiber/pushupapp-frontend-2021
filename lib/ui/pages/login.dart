@@ -72,7 +72,7 @@ class _LoginPageState extends State<LoginPage> {
 
     // Delays the time it takes for the request so the loading screen
     // with logo can be displayed
-    Future<List<pojo.Group>> loadingScreenDelay() async {
+    Future<dynamic> loadingScreenDelay() async {
       await Future.delayed(const Duration(milliseconds: 500));
       return await API.get().groups();
     }
@@ -99,7 +99,7 @@ class _LoginPageState extends State<LoginPage> {
                         SharedPreferences prefs = s.data as SharedPreferences;
                         prefs.setString("puapp_username", username);
                         prefs.setString("puapp_password", password);
-                        return pages.BaseLayout(username, snap.data as List<pojo.Group>);
+                        return const pages.BaseLayout();
                       });
                 });
           }));})

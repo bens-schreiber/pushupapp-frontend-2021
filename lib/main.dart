@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:pushupapp/api/requests.dart';
 import 'package:pushupapp/ui/pages/index.dart' as pages;
-import 'package:pushupapp/api/pojo.dart' as pojo;
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:pushupapp/api/httpexceptions.dart' as he;
+import 'package:pushupapp/ui/widgets/index.dart' as widgets;
 
 //todo: coin update not always updating (probably has to do with it randomly selecting the same user)
 void main() async {
-
   WidgetsFlutterBinding.ensureInitialized();
 
   // Attempt to login to the server using user information
   // Stored within the phone. if none found, present the login page.
   SharedPreferences? pref = await SharedPreferences.getInstance();
 
-  if (!pref.containsKey("puapp_username")) { runApp(const App(page: pages.LoginPage())); }
+  if (!pref.containsKey("puapp_username")) {
+    runApp(const App(page: pages.LoginPage()));
+  }
 
   else {
     Object? username = pref.get("puapp_username");
@@ -32,9 +33,9 @@ void main() async {
           builder: (context, snap) {
             if (snap.data == null) {
               return const pages.LoadPage();
-            } return pages.BaseLayout(
-              username, snap.data as List<pojo.Group>);
-            })));
+            }
+            return const pages.BaseLayout();
+          })));
     });
   }
 }
@@ -42,20 +43,22 @@ void main() async {
 class App extends StatelessWidget {
 
   final Widget page;
+
   const App({Key? key, required this.page}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: "iPushup",
-        theme: ThemeData(
-            scaffoldBackgroundColor: Colors.grey[900], fontFamily: "Helvetica"
-        ),
+      title: "iPushup",
+      theme: ThemeData(
+          scaffoldBackgroundColor: Colors.grey[900], fontFamily: "Helvetica"
+      ),
 
-        // Application
-        home: page,
+      // Application
+      home: page,
 
     );
   }
 }
+
 

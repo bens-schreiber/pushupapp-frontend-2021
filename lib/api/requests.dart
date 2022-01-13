@@ -96,15 +96,9 @@ class _Post {
 
 // HTTP Delete methods
 class _Del {
-  Future<void> disband(List<pojo.Group> groups) async {
-    late String id;
-
-    // Find ID of group the user is creator of
-    for (pojo.Group g in groups) {
-      if (g.creator == API.username) {
-        id = g.id;
-      }
-    }
+  Future<void> disband() async {
+    print("lol!");
+    String id = API.groups.where((group) => group.creator == API.username).first.id;  // don't need to nullcheck
 
     var res = await http.delete(_parseUri("group/disband"),
         headers: ({"Username": API.username, "Token": API.token, "ID": id}));
@@ -115,14 +109,7 @@ class _Del {
   }
 
   Future<void> kick(String user) async {
-    late String id;
-
-    // Find ID of group the user is creator of
-    for (pojo.Group g in API.groups) {
-      if (g.creator == API.username) {
-        id = g.id;
-      }
-    }
+    String id = API.groups.where((group) => API.username == group.creator).first.id; // no need to nullcheck
 
     var res = await http.delete(_parseUri("group/kick/" + user),
         headers: ({"Username": API.username, "Token": API.token, "ID": id}));

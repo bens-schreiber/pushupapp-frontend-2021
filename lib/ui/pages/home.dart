@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pushupapp/api/pojo.dart' as pojo;
 import 'package:pushupapp/api/requests.dart';
 import 'package:pushupapp/ui/widgets/index.dart' as widgets;
-import 'package:pushupapp/api/httpexceptions.dart' as he;
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:pushupapp/ui/errorhandle.dart' as handle;
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -87,37 +86,7 @@ class _HomePageState extends State<HomePage> {
           .then((value) => API.get().groups().then((groups) => setState(() {
                 _groups = API.groups;
               })))
-          .catchError((error) {
-        _errorHandle(error);
-      });
-    }).catchError((error) {
-      _errorHandle(error);
-    });
+          .catchError((e) => handle.basicErrorHandle(e, context));
+    }).catchError((e) => handle.basicErrorHandle(e, context));
   }
-
-  _errorHandle(he.HttpException e) {
-    switch (e.status) {
-
-      // Re-establish token
-      case he.Status.unauthorized:
-        _loginWithSavedPrefs();
-        _updateCoin();
-        break;
-
-      case he.Status.ratelimit:
-        widgets.errorDialog(context, "Slow down there");
-        break;
-
-      default:
-        widgets.errorDialog(context, "An internal server error has occurred.");
-        break;
-    }
-  }
-}
-
-Future<void> _loginWithSavedPrefs() async {
-  SharedPreferences? pref = await SharedPreferences.getInstance();
-  Object? username = pref.get("puapp_username");
-  Object? password = pref.get("puapp_password");
-  await API.initialize(username as String, password as String);
 }

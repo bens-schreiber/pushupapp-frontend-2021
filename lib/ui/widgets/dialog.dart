@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pushupapp/api/requests.dart';
+import 'package:pushupapp/ui/errorhandle.dart' as handle;
 
 void errorDialog(BuildContext context, String message) {
   showDialog(
@@ -19,7 +20,7 @@ void errorDialog(BuildContext context, String message) {
       });
 }
 
-void confirmationDialog(BuildContext context, String message, Future<void> future, Function onPressed) {
+void confirmationDialog(BuildContext context, String message, Function future, Function onPressed) {
   showDialog(
       context: context,
       builder: (context) {
@@ -30,10 +31,9 @@ void confirmationDialog(BuildContext context, String message, Future<void> futur
               TextButton(
                   child: const Text("Yes"),
                   onPressed: () {
-                    future.then((snap) {
-                      API.get().groups().then((snap) {return;});
+                    future().then((snap) {
+                      API.get().groups().then((snap) {onPressed();}).catchError((e) => handle.basicErrorHandle(e, context));
                     });
-                    onPressed();
                     Navigator.of(context).pop();
                   }),
               TextButton(

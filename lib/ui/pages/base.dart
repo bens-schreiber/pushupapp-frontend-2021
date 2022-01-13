@@ -64,6 +64,7 @@ class _BaseLayoutState extends State<BaseLayout> {
             ],
             selectedIndex: _selectedIndex,
             onTabChange: (index) {
+              API.get().groups();
               setState(() {
                 _selectedIndex = index;
               });

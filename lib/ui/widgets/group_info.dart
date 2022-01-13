@@ -20,7 +20,8 @@ class GroupInfo extends StatelessWidget {
         padding: const EdgeInsets.only(left: 5, right: 5, top: 15, bottom: 15),
         // Box padding from sides of scaffold
 
-        child: Column(mainAxisAlignment: MainAxisAlignment.center, // alignment
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.center, // alignment
             children: [
               SizedBox(
                 height: 30,
@@ -60,8 +61,6 @@ class GroupInfo extends StatelessWidget {
                   ],
                 ),
               ),
-
-              Text("Created by Ben Schreiber", style: _basic(fontSize: 13))
             ]),
       ),
     );
@@ -92,7 +91,7 @@ class GroupInfo extends StatelessWidget {
   }
 
   List<List> _chunk(List list) {
-    int chunkSize = 4;
+    const int chunkSize = 4;
     List<List> chunks = [];
     int len = list.length;
     for (var i = 0; i < len; i += chunkSize) {

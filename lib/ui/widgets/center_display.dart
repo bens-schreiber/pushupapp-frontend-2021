@@ -43,14 +43,13 @@ class _CenterDisplayState extends State<CenterDisplay> {
       children: [
         FittedBox(
           child: SizedBox(
-            height: 386,
+            height: 415,
             width: 250,
             child: PageView(
               controller: _pageController,
               children: _coins,
               scrollDirection: Axis.vertical,
               onPageChanged: widget.onPageUpdated,
-
             ),
           ),
         ),

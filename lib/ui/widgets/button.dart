@@ -31,7 +31,7 @@ class _GlowingButtonState extends State<GlowingButton> {
         height: widget.height,
         width: double.infinity,
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(40),
+            borderRadius: BorderRadius.circular(5),
             gradient: const LinearGradient(
               colors: [
                 GlowingButton.color1,
@@ -46,7 +46,7 @@ class _GlowingButtonState extends State<GlowingButton> {
               style: TextStyle(
                   color: Colors.white,
                   fontSize: widget.fontSize,
-                  fontWeight: FontWeight.w600),
+                  fontWeight: FontWeight.bold),
             )
           ],
         ),

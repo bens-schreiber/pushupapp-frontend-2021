@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 
 class Coin extends StatefulWidget {
   final int displayNum;
-  bool _isFront = true;
-  double _dragPosition = 0;
+  bool isFront = true;
+  double dragPosition = 0;
 
   Coin(this.displayNum, {Key? key}) : super(key: key);
 
@@ -18,6 +18,7 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
   final Image _frontImage = const Image(image: AssetImage("assets/logo.png"));
   final Image _back = const Image(image: AssetImage("assets/logoback.png"));
   late int _displayNum;
+  late bool _isFrontStart;
 
   late AnimationController _controller;
   late Animation<double> _animation;
@@ -30,7 +31,7 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
 
     _controller.addListener(() {
       setState(() {
-        widget._dragPosition = _animation.value;
+        widget.dragPosition = _animation.value;
         setImageSide();
       });
     });
@@ -57,21 +58,35 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
       ],
     );
 
-    final angle = widget._dragPosition / 180 * math.pi;
+    final angle = widget.dragPosition / 180 * math.pi;
     final transform = Matrix4.identity()
       ..setEntry(3, 2, 0.001)
       ..rotateY(angle);
 
     return GestureDetector(
+
+      onHorizontalDragStart: (details) {
+        _controller.stop();
+        _isFrontStart = widget.isFront;
+        
+      },
+
       onHorizontalDragUpdate: (details) => setState(() {
-        widget._dragPosition -= details.delta.dx;
-        widget._dragPosition %= 360;
+        widget.dragPosition -= details.delta.dx;
+        widget.dragPosition %= 360;
         setImageSide();
       }),
       onHorizontalDragEnd: (details) {
-        double end = widget._isFront ? (widget._dragPosition > 180 ? 360 : 0) : 180;
+
+        var velocity = details.velocity.pixelsPerSecond.dx.abs();
+
+        if (velocity >= 100) {
+          widget.isFront = !_isFrontStart;
+        }
+
+        double end = widget.isFront ? (widget.dragPosition > 180 ? 360 : 0) : 180;
         _animation = Tween<double>(
-          begin: widget._dragPosition,
+          begin: widget.dragPosition,
           end: end,
         ).animate(_controller);
         _controller.forward(from: 0);
@@ -79,7 +94,7 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
       child: Transform(
           transform: transform,
           alignment: Alignment.center,
-          child: widget._isFront
+          child: widget.isFront
               ? front
               : Transform(
                   transform: Matrix4.identity()..rotateY(math.pi),
@@ -89,10 +104,10 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
   }
 
   void setImageSide() {
-    if (widget._dragPosition <= 90 || widget._dragPosition >= 270) {
-      widget._isFront = true;
+    if (widget.dragPosition <= 90 || widget.dragPosition >= 270) {
+      widget.isFront = true;
     } else {
-      widget._isFront = false;
+      widget.isFront = false;
     }
   }
 }

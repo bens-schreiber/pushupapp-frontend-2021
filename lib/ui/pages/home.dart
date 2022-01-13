@@ -42,7 +42,7 @@ class _HomePageState extends State<HomePage> {
 
             // Pushup button widget
             Padding(
-                padding: const EdgeInsets.all(10.0),
+                padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
                 child: widgets.GlowingButton(
                     text: API.username == _groups[_displayingIndex].coinHolder
                         ? "Click to complete your pushups!"

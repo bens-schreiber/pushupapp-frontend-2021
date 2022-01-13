@@ -114,11 +114,11 @@ class _Del {
     }
   }
 
-  Future<void> kick(String user, List<pojo.Group> groups) async {
+  Future<void> kick(String user) async {
     late String id;
 
     // Find ID of group the user is creator of
-    for (pojo.Group g in groups) {
+    for (pojo.Group g in API.groups) {
       if (g.creator == API.username) {
         id = g.id;
       }

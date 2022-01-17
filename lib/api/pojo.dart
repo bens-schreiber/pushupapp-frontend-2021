@@ -1,3 +1,5 @@
+
+/// Plain old java object
 class Group {
   Group({
     required this.id,

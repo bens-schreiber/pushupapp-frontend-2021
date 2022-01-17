@@ -5,6 +5,7 @@ import 'package:pushupapp/api/pojo.dart';
 import 'package:pushupapp/api/requests.dart';
 import 'package:pushupapp/ui/widgets/index.dart';
 
+/// Main page with Center Display widget in the middle
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pushupapp/api/requests.dart';
 
+/// Provides popup alert notifications
 abstract class MDialog {
   static const String _connectionError = "A connection error has occurred.";
   static const String _internalError = "An internal error has occurred";
@@ -9,6 +10,7 @@ abstract class MDialog {
   static const String _noConnection = "No connection to the internet could be established.";
   static const String _rateLimited = "You are being ratelimited.";
 
+  /// Basic dialog with a message and an "OK" button to dismiss
   static void okDialog(BuildContext context, String message) {
     showDialog(
         context: context,
@@ -43,6 +45,8 @@ abstract class MDialog {
     okDialog(context, _rateLimited);
   }
 
+  /// Alert with a "Yes" or "No" option
+  /// @param future and @param onPressed ran on the "Yes" option
   static void confirmationDialog(BuildContext context, String message, Function future,
       Function onPressed) {
     showDialog(

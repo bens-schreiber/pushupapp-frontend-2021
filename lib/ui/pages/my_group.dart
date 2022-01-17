@@ -4,7 +4,6 @@ import 'package:pushupapp/api/requests.dart';
 import 'package:pushupapp/api/pojo.dart';
 import 'package:pushupapp/ui/dialog.dart';
 import 'package:flutter/services.dart';
-
 import '../dialog.dart';
 
 class MyGroupPage extends StatefulWidget {

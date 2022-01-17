@@ -5,6 +5,7 @@ import 'package:pushupapp/ui/widgets/navbar/google_nav_bar.dart';
 
 import '../dialog.dart';
 
+/// App bar and bottom nav bar base with a center display
 class BaseLayout extends StatefulWidget {
   const BaseLayout({Key? key}) : super(key: key);
 

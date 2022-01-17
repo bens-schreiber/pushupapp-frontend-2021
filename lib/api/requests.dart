@@ -8,13 +8,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 Uri _parseUri(String i) => Uri.parse("https://puappapi.dev/api/" + i);
 
-// Cached API variables
+/// Interacts with the puappapi.dev API
+/// Caches necessary values to send API requests
+/// Caches main display information every request
 class API {
   static late String token;
   static late String username;
   static List<pojo.Group> groups = List.empty(growable: true);
 
-  // Main constructor, return an instance of the API given a successful login
+  /// Login a user and initialize proceeding requests
   static Future<he.Status> initialize(String username, String password) async {
     try {
       String token = await _Post._login(username, password);
@@ -26,6 +28,7 @@ class API {
     }
   }
 
+  /// Remove all cached values and stored values
   static Future<void> logout() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove("puapp_username");
@@ -35,7 +38,8 @@ class API {
     groups = List.empty(growable: true);
   }
 
-  // Secondary constructor, create an account then call main constructor
+  /// Creates a new account through the API then calls
+  /// The initialize() method with the new account information
   static Future<he.Status> newUser(String username, String password) async {
     try {
       // Create a new account
@@ -46,13 +50,20 @@ class API {
     }
   }
 
+  /// Return a POST object with HTTP POST requests
   static _Post post() => _Post();
+
+  /// Return a DEL object with HTTP DEL requests
   static _Del del() => _Del();
+
+  /// Return a GET object with HTTP GET requests
   static _Get get() => _Get();
 }
 
-// HTTP Post methods
+/// POST methods
 class _Post {
+
+  // Used only in the API initialize method
   static Future<String> _login(String username, String password) async {
     var res = await http
         .post(_parseUri("client/login"),
@@ -67,6 +78,7 @@ class _Post {
     return body["token"];
   }
 
+  // Used only in the API newUser method
   static Future<void> _register(String username, String password) async {
     var res = await http
         .post(_parseUri("client/register"),
@@ -78,6 +90,7 @@ class _Post {
     }
   }
 
+  /// Create a group with the User as group leader
   Future<void> create() async {
     var res = await http
         .post(_parseUri("group/create"),
@@ -89,6 +102,7 @@ class _Post {
     }
   }
 
+  /// Join a group off the given ID
   Future<void> join(String id) async {
     var res = await http
         .post(_parseUri("group/join"),
@@ -100,6 +114,7 @@ class _Post {
     }
   }
 
+  /// Update the Pushup coin value by 1
   Future<void> coin(String id) async {
     var res = await http
         .post(_parseUri("group/coin"),
@@ -112,8 +127,10 @@ class _Post {
   }
 }
 
-// HTTP Delete methods
+/// DEL methods
 class _Del {
+
+  /// Remove the group and all members within it
   Future<void> disband() async {
     String id = API.groups
         .where((group) => group.creator == API.username)
@@ -130,6 +147,7 @@ class _Del {
     }
   }
 
+  /// Remove a specific member of a group
   Future<void> kick(String user) async {
     String id = API.groups
         .where((group) => API.username == group.creator)
@@ -147,8 +165,10 @@ class _Del {
   }
 }
 
-//HTTP GET methods
+/// GET methods
 class _Get {
+
+  // Used only for dev testing
   Future<void> healthCheck() async {
     var res = await http.get(_parseUri("healthcheck"),
         headers: {"Accept": "application/json"})
@@ -159,6 +179,9 @@ class _Get {
     }
   }
 
+  /// Grab the groups the user is in, along with relevant information
+  /// for displaying those groups.
+  /// Main request for the app.
   Future<he.Status?> groups() async {
     var res = await http
         .get(_parseUri("group/" + API.username),

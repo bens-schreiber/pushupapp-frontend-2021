@@ -1,3 +1,4 @@
+/// HTTP Status responses
 enum Status {
   ok,
   created,
@@ -9,6 +10,7 @@ enum Status {
   internal
 }
 
+/// Exceptions to be thrown by the requests API
 class HttpException implements Exception {
   Status? status;
 
@@ -41,5 +43,4 @@ class HttpException implements Exception {
   String toString() {
     return 'HttpException: $status';
   }
-
 }

@@ -7,14 +7,18 @@ class CenterDisplay extends StatefulWidget {
   final List<pojo.Group> groups;
   final Function(int) onPageUpdated;
   final int index;
-  const CenterDisplay({required this.groups, required this.onPageUpdated, required this.index, Key? key}) : super(key: key);
+  const CenterDisplay(
+      {required this.groups,
+      required this.onPageUpdated,
+      required this.index,
+      Key? key})
+      : super(key: key);
 
   @override
   _CenterDisplayState createState() => _CenterDisplayState();
 }
 
 class _CenterDisplayState extends State<CenterDisplay> {
-
   late List<Widget> _coins;
   late PageController _pageController;
   late List<pojo.Group> _groups;
@@ -22,7 +26,6 @@ class _CenterDisplayState extends State<CenterDisplay> {
 
   @override
   Widget build(BuildContext context) {
-
     // In order to properly refresh the widget on setState()
     // changeable variables must be declared in build.
     _coins = List.empty(growable: true);
@@ -34,27 +37,19 @@ class _CenterDisplayState extends State<CenterDisplay> {
       _coins.add(FittedBox(child: widgets.Coin(group.coin)));
     }
 
-    _pageController = PageController(
-        initialPage: _index,
-        viewportFraction: 0.9
-    );
+    _pageController =
+        PageController(initialPage: _index, viewportFraction: 0.9);
 
-    return Column(
-      children: [
-        FittedBox(
+    return Column(children: [
+      FittedBox(
           child: SizedBox(
-            height: 415,
-            width: 250,
-            child: PageView(
-              controller: _pageController,
-              children: _coins,
-              scrollDirection: Axis.vertical,
-              onPageChanged: widget.onPageUpdated,
-            ),
-          ),
-        ),
-      ],
-    );
-
+              height: 360,
+              width: 250,
+              child: PageView(
+                  controller: _pageController,
+                  children: _coins,
+                  scrollDirection: Axis.vertical,
+                  onPageChanged: widget.onPageUpdated)))
+    ]);
   }
 }

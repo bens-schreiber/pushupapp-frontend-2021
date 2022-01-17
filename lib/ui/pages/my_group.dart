@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pushupapp/api/requests.dart';
-import 'package:pushupapp/api/pojo.dart' as pojo;
-import 'package:pushupapp/ui/widgets/dialog.dart' as dialog;
+import 'package:pushupapp/api/pojo.dart';
+import 'package:pushupapp/ui/dialog.dart';
 import 'package:flutter/services.dart';
+
+import '../dialog.dart';
 
 class MyGroupPage extends StatefulWidget {
   const MyGroupPage({Key? key}) : super(key: key);
@@ -13,7 +15,7 @@ class MyGroupPage extends StatefulWidget {
 }
 
 class _MyGroupPageState extends State<MyGroupPage> {
-  late List<pojo.Group> _groups;
+  late List<Group> _groups;
 
   @override
   void initState() {
@@ -38,7 +40,7 @@ class _MyGroupPageState extends State<MyGroupPage> {
   List<Widget> displayCreate() {
     return [
       const Padding(
-          padding: EdgeInsets.only(top: 60.0, left: 25),
+          padding: EdgeInsets.only(top: 35.0, left: 25),
           child: Text("Create a Group",
               style: TextStyle(
                   fontSize: 35,
@@ -52,7 +54,7 @@ class _MyGroupPageState extends State<MyGroupPage> {
               child: IconButton(
                   padding: EdgeInsets.zero,
                   icon: const Icon(Icons.add, size: 100, color: Colors.white),
-                  onPressed: () => dialog.confirmationDialog(
+                  onPressed: () => MDialog.confirmationDialog(
                           context,
                           "Are you sure you'd like to create a group?",
                           () => API.post().create(), () {
@@ -70,15 +72,14 @@ class _MyGroupPageState extends State<MyGroupPage> {
   List<Widget> _displayGroup() {
     return [
       const Padding(
-          padding: EdgeInsets.only(top: 60.0, left: 25, bottom: 10),
+          padding: EdgeInsets.only(top: 35.0, left: 25, bottom: 10),
           child: Text("My Group",
               style: TextStyle(
                   fontSize: 35,
                   color: Colors.white,
                   fontWeight: FontWeight.bold))),
       Padding(
-          padding:
-              const EdgeInsets.only(bottom: 25, left: 25, right: 25),
+          padding: const EdgeInsets.only(bottom: 25, left: 25, right: 25),
           child: _creatorButtons()),
       Padding(
           padding: const EdgeInsets.only(left: 25, right: 25),
@@ -88,8 +89,8 @@ class _MyGroupPageState extends State<MyGroupPage> {
                   borderRadius: BorderRadius.circular(5)),
               child: SingleChildScrollView(
                   child: Column(
-                    children: _groupWidgets(),
-                  )))),
+                children: _groupWidgets(),
+              )))),
     ];
   }
 
@@ -102,7 +103,11 @@ class _MyGroupPageState extends State<MyGroupPage> {
         child: Padding(
             padding: const EdgeInsets.only(left: 10),
             child: Row(children: [
-              const Icon(Icons.group, size: 50, color: Colors.white,),
+              const Icon(
+                Icons.group,
+                size: 50,
+                color: Colors.white,
+              ),
               const Padding(
                   padding: EdgeInsets.only(left: 5),
                   child: Text("My Group",
@@ -110,8 +115,8 @@ class _MyGroupPageState extends State<MyGroupPage> {
               const Spacer(),
               IconButton(
                   padding: EdgeInsets.zero,
-                  icon: const Icon(Icons.content_copy,
-                      size: 45, color: Colors.white),
+                  icon: Icon(Icons.content_copy,
+                      size: 45, color: Colors.grey[600]),
                   onPressed: () {
                     Clipboard.setData(ClipboardData(
                             text: _groups
@@ -131,7 +136,7 @@ class _MyGroupPageState extends State<MyGroupPage> {
                       icon: const Icon(Icons.block_rounded,
                           size: 50, color: Colors.red),
                       onPressed: () {
-                        dialog.confirmationDialog(
+                        MDialog.confirmationDialog(
                             context,
                             "Are you sure you'd like to disband the group?",
                             () => API.del().disband(), () {
@@ -145,7 +150,7 @@ class _MyGroupPageState extends State<MyGroupPage> {
 
   List<Widget> _groupWidgets() {
     List<Widget> _groupWidgets = List.empty(growable: true);
-    pojo.Group group = _groups.where((g) => g.creator == API.username).first;
+    Group group = _groups.where((g) => g.creator == API.username).first;
     _groupWidgets = group.members
         .where((member) => member != API.username)
         .map((member) => Padding(
@@ -171,7 +176,7 @@ class _MyGroupPageState extends State<MyGroupPage> {
                           icon: const Icon(Icons.block_rounded,
                               size: 50, color: Colors.red),
                           onPressed: () {
-                            dialog.confirmationDialog(
+                            MDialog.confirmationDialog(
                                 context,
                                 "Are you sure you'd like to kick " +
                                     member +

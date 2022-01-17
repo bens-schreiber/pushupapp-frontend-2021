@@ -1,21 +1,22 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pushupapp/api/requests.dart';
-import "package:pushupapp/ui/widgets/index.dart";
+import 'package:pushupapp/ui/widgets/index.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'index.dart';
 import 'package:pushupapp/api/httpexceptions.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+class SignupPage extends StatefulWidget {
+  const SignupPage({Key? key}) : super(key: key);
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _SignupPageState createState() => _SignupPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _SignupPageState extends State<SignupPage> {
   final TextEditingController username = TextEditingController();
   final TextEditingController password = TextEditingController();
 
@@ -27,32 +28,32 @@ class _LoginPageState extends State<LoginPage> {
                 padding: const EdgeInsets.symmetric(horizontal: 40),
                 width: double.infinity,
                 child: Column(children: [
-                  _logo(),
-                  _inputField(
-                      const Icon(Icons.person_outline,
-                          size: 30, color: Color(0xffA6B0BD)),
-                      "Username",
-                      false,
-                      username),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 200),
+                    child: _inputField(
+                        const Icon(Icons.person_outline,
+                            size: 30, color: Color(0xffA6B0BD)),
+                        "Enter a Username",
+                        false,
+                        username),
+                  ),
                   _inputField(
                       const Icon(Icons.lock_outline,
                           size: 30, color: Color(0xffA6B0BD)),
-                      "Password",
+                      "Enter a "
+                          "Password",
                       true,
                       password),
                   Container(
                       margin: const EdgeInsets.only(top: 15, bottom: 15),
                       child: GlowingButton(
-                          text: "Sign in",
+                          text: "Create account",
                           height: 60,
-                          onPressed: () async => await _login(
-                              username.value.text, password.value.text))),
-                  const Text("Don't have an account?",
-                      style: TextStyle(
-                          color: Color(0xffA6B0BD),
-                          fontWeight: FontWeight.w400,
-                          fontSize: 18)),
-                  _signUp(),
+                          onPressed: () =>
+                              _register(
+                                  username.value.text, password.value.text))),
+                  _haveAccount(),
+                  _loginButton(),
                   _createdBy()
                 ]))));
   }
@@ -60,24 +61,35 @@ class _LoginPageState extends State<LoginPage> {
   Widget _createdBy() {
     return Container(
         padding: const EdgeInsets.only(top: 10, bottom: 18),
-        child: const Text("Created by Benjamin Schreiber",
-            style: TextStyle(
-                color: Color(0xffA6B0BD),
-                fontWeight: FontWeight.w400,
-                fontSize: 12)));
+        child: TextButton(
+            onPressed: () => {},
+            child: const Text("Created by Benjamin Schreiber",
+                style: TextStyle(
+                    color: Color(0xffA6B0BD),
+                    fontWeight: FontWeight.w400,
+                    fontSize: 12))));
   }
 
-  Widget _signUp() {
+  Widget _loginButton() {
     return TextButton(
-        onPressed: () => {
-              Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const SignupPage()))
-            },
-        child: const Text("SIGN UP NOW",
+        onPressed: () =>
+        {
+          Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => const LoginPage()))
+        },
+        child: const Text("LOGIN",
             style: TextStyle(
                 color: Color(0xFF008FFF),
                 fontWeight: FontWeight.w800,
                 fontSize: 16)));
+  }
+
+  Widget _haveAccount() {
+    return const Text("Already have an account?",
+        style: TextStyle(
+            color: Color(0xffA6B0BD),
+            fontWeight: FontWeight.w400,
+            fontSize: 18));
   }
 
   Widget _inputField(Icon prefixIcon, String hintText, bool isPassword,
@@ -116,64 +128,34 @@ class _LoginPageState extends State<LoginPage> {
                     borderSide: BorderSide(color: Colors.white)))));
   }
 
-  Widget _logo() {
-    return Container(
-        margin: const EdgeInsets.only(top: 100, bottom: 30),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            SizedBox(
-                width: 130,
-                child: Image(image: AssetImage("assets/logoback.png"))),
-            Padding(
-              padding: EdgeInsets.only(left: 10),
-              child: Text("iPushup",
-                  style: TextStyle(fontSize: 50, color: Colors.white)),
-            )
-          ],
-        ));
-  }
-
-  Future<void> _login(String username, String password) async {
-
-    try {
-      await API.initialize(username, password);
-    } on SocketException {
-      MDialog.connectionError(context);
-      return;
-    } on HttpException catch (e) {
-      switch (e.status) {
-        case Status.unauthorized:
-          MDialog.invalidCredentials(context);
-          return;
-        case Status.badRequest:
-          MDialog.okDialog(context, "Enter a username and password.");
-          return;
-        case Status.ratelimit:
-          MDialog.rateLimited(context);
-          return;
-        default:
-          MDialog.internalError(context);
-          return;
-      }
-    }
-
+  Future<void> _register(String username, String password) async {
     LoadPage.push(context, (context) async {
       try {
-        await API.get().groups();
+        await API.newUser(username, password);
 
-        /// Save user login details in phone for easier future login
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs.setString("puapp_username", username);
-        prefs.setString("puapp_password", password);
-        return const BaseLayout();
+        try {
+          // Grab API token and cache user details
+          await API.initialize(username, password);
+
+          await API.get().groups(); // Grab page information
+
+          // Save user login details in phone for easier future login
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          prefs.setString("puapp_username", username);
+          prefs.setString("puapp_password", password);
+        } on Exception {
+          rethrow;
+        }
       } on SocketException {
-        MDialog.connectionError(context);
+        MDialog.noConnection(context);
       } on HttpException catch (e) {
-        if (e.status != Status.notFound) {
+        if (e.status == Status.badRequest) {
+          MDialog.okDialog(context, "Username already exists");
+        } else {
           MDialog.internalError(context);
         }
       }
     });
   }
+
 }

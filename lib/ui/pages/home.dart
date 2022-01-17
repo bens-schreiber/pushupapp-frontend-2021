@@ -1,8 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:pushupapp/api/pojo.dart' as pojo;
+import 'package:pushupapp/api/pojo.dart';
 import 'package:pushupapp/api/requests.dart';
-import 'package:pushupapp/ui/widgets/index.dart' as widgets;
-import 'package:pushupapp/ui/errorhandle.dart' as handle;
+import 'package:pushupapp/ui/widgets/index.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -13,7 +14,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late int _displayingIndex;
-  late List<pojo.Group> _groups;
+  late List<Group> _groups;
 
   @override
   void initState() {
@@ -25,37 +26,44 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Main homepage contents
-      body: Column(
-          // Column Alignment
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.max,
+        // Main homepage contents
+        body: Column(
+            // Column Alignment
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
 
-          // Main body of home page
-          children: [
-            // Centered Flip Coin widget
-            widgets.CenterDisplay(
-                groups: _groups,
-                onPageUpdated: _onPageUpdated,
-                index: _displayingIndex),
+            // Main body of home page
+            children: _groups.isEmpty
+                ? _joinGroup()
+                : [
+                    // Centered Flip Coin widget
+                    CenterDisplay(
+                        groups: _groups,
+                        onPageUpdated: _onPageUpdated,
+                        index: _displayingIndex),
 
-            // Pushup button widget
-            Padding(
-                padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
-                child: widgets.GlowingButton(
-                    text: API.username == _groups[_displayingIndex].coinHolder
-                        ? "Click to complete your pushups!"
-                        : _groups[_displayingIndex].coinHolder +
-                            " is the coin holder",
-                    onPressed: _updateCoin)),
+                    // Pushup button widget
+                    Padding(
+                        padding:
+                            const EdgeInsets.only(top: 5, left: 10, right: 10),
+                        child: GlowingButton(
+                            text: API.username ==
+                                    _groups[_displayingIndex].coinHolder
+                                ? "Click to complete your pushups!"
+                                : _groups[_displayingIndex].coinHolder +
+                                    " is the coin holder",
+                            onPressed: _updateCoin)),
 
-            // Group information widget
-            Padding(
-              padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
-              child: widgets.GroupInfo(_groups[_displayingIndex]),
-            ),
-          ]),
-    );
+                    // Group information widget
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: GroupInfo(_groups[_displayingIndex]),
+                    )
+                  ]));
+  }
+
+  List<Widget> _joinGroup() {
+    return [Container()];
   }
 
   void _onPageUpdated(int page) {
@@ -65,28 +73,31 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _updateCoin() {
-    pojo.Group _g = _groups[_displayingIndex];
+    Group _g = _groups[_displayingIndex];
     if (API.username != _g.coinHolder) {
       return;
     }
     showDialog(
         context: context,
-        builder: (context) {
+        builder: (c) {
           return AlertDialog(
               contentPadding: EdgeInsets.zero,
-              content: widgets.Pledge(
+              content: Pledge(
                   count: _g.coin,
-                  onPressed: () {
-                    Navigator.of(context).pop();
+                  onPressed: () async {
+                    try {
+                      Navigator.of(c).pop();
+                      await API.post().coin(_g.id);
+                      await API.get().groups();
+                      setState(() {
+                        _groups = API.groups;
+                      });
+                    } on SocketException {
+                      MDialog.noConnection(context);
+                    } on HttpException {
+                      MDialog.internalError(context);
+                    }
                   }));
-        }).then((snap) {
-      API
-          .post()
-          .coin(_g.id)
-          .then((value) => API.get().groups().then((groups) => setState(() {
-                _groups = API.groups;
-              })))
-          .catchError((e) => handle.basicErrorHandle(e, context));
-    }).catchError((e) => handle.basicErrorHandle(e, context));
+        });
   }
 }

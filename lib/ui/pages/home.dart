@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:pushupapp/api/pojo.dart';
 import 'package:pushupapp/api/requests.dart';
 import 'package:pushupapp/ui/widgets/index.dart';
@@ -18,10 +19,10 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        // Main homepage contents
-        body: API.builder((groups) => Column(
-          // Column Alignment
+    return API.builder((groups) =>
+        Scaffold(
+            body: Column(
+            // Column Alignment
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.max,
 
@@ -29,45 +30,78 @@ class _HomePageState extends State<HomePage> {
             children: groups.isEmpty
                 ? _joinGroup()
                 : [
-              // Centered Flip Coin widget
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 35),
-                    child: CenterDisplay(
-                        groups: groups,
-                        onPageUpdated: _onPageUpdated,
-                        index: _displayingIndex),
-                  ),
-                  IndexIndicator(index: _displayingIndex,)
-                ],
-              ),
+                    // Centered Flip Coin widget
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 35),
+                          child: CenterDisplay(
+                              groups: groups,
+                              onPageUpdated: _onPageUpdated,
+                              index: _displayingIndex),
+                        ),
+                        IndexIndicator(
+                          index: _displayingIndex,
+                        )
+                      ],
+                    ),
 
-              // Pushup button widget
-              Padding(
-                  padding:
-                  const EdgeInsets.only(top: 5, left: 10, right: 10),
-                  child: GlowingButton(
-                      text: API.username ==
-                          groups[_displayingIndex].coinHolder
-                          ? "Click to complete your pushups!"
-                          : groups[_displayingIndex].coinHolder +
-                          " is the coin holder",
-                      onPressed:_updateCoin)),
+                    // Pushup button widget
+                    Padding(
+                        padding:
+                            const EdgeInsets.only(top: 5, left: 10, right: 10),
+                        child: GlowingButton(
+                            text: API.username ==
+                                    groups[_displayingIndex].coinHolder
+                                ? "Click to complete your pushups!"
+                                : groups[_displayingIndex].coinHolder +
+                                    " is the coin holder",
+                            onPressed: _updateCoin)),
 
-              // Group information widget
-              Padding(
-                padding: const EdgeInsets.all(10),
-                child: GroupInfo(groups[_displayingIndex]),
-              )
-            ]))
-
-    );
+                    // Group information widget
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: GroupInfo(groups[_displayingIndex]),
+                    )
+                  ])));
   }
 
-  List<Widget> _joinGroup() {
-    return [Container()];
+  _joinGroup() {
+    return [ Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text("Click the icon to join a group", style: TextStyle(color: Colors.grey[600], fontSize: 20)),
+        Center(
+          child: IconButton(
+              padding: EdgeInsets.zero,
+              onPressed: () async {
+                ClipboardData? cdata =
+                await Clipboard.getData(Clipboard.kTextPlain);
+                if (cdata == null ||
+                    cdata.text == null ||
+                    cdata.text!.isEmpty ||
+                    cdata.text!.length != 36) {
+                  return MDialog.okDialog(
+                      context, "Copy an invite code to your clipboard.");
+                }
+                try {
+                  await API.post().join(cdata.text!);
+                  await API.get().groups();
+
+                  MDialog.okDialog(context, "Group joined!");
+                } on SocketException {
+                  MDialog.noConnection(context);
+                } on HttpException {
+                  MDialog.okDialog(context, "Unknown or invalid invite code.");
+                }
+              },
+              icon: Icon(Icons.add_box_outlined, color: Colors.grey[600], size: 30,)),
+        ),
+      ],
+    )
+    ];
   }
 
   void _onPageUpdated(int page) {

@@ -22,7 +22,7 @@ class _LoadPageState extends State<LoadPage> {
     super.initState();
 
     if (widget.toProcess != null) {
-      Future.delayed(const Duration(milliseconds: 100)).then((_) => (widget.toProcess!(context) as Future<dynamic>).then((value) =>
+      Future.delayed(const Duration(milliseconds: 200)).then((_) => (widget.toProcess!(context) as Future<dynamic>).then((value) =>
           Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => value))
       ));
     }

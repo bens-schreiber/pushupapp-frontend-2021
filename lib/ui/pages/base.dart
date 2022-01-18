@@ -1,4 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:pushupapp/api/httpexceptions.dart';
 import 'package:pushupapp/api/requests.dart';
 import 'package:pushupapp/ui/pages/index.dart';
 import 'package:pushupapp/ui/widgets/navbar/google_nav_bar.dart';
@@ -9,7 +13,7 @@ import '../dialog.dart';
 class BaseLayout extends StatefulWidget {
   BaseLayout({Key? key}) : super(key: key);
 
-  final List<Widget> _pages = [const HomePage(), const MyGroupPage()];
+  final List<Widget> pages = [const HomePage(), const MyGroupPage()];
 
   @override
   _BaseLayoutState createState() => _BaseLayoutState();
@@ -17,13 +21,20 @@ class BaseLayout extends StatefulWidget {
 
 class _BaseLayoutState extends State<BaseLayout> {
   int _selectedIndex = 0;
+  late List<Widget> _pages;
+
+  @override
+  void initState() {
+    super.initState();
+    _pages = widget.pages;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: _appBar(),
         bottomNavigationBar: _bottomNavigationBar(),
-        body: widget._pages[_selectedIndex]);
+        body: _pages[_selectedIndex]);
   }
 
   Container _bottomNavigationBar() {
@@ -53,8 +64,7 @@ class _BaseLayoutState extends State<BaseLayout> {
                     ],
                     selectedIndex: _selectedIndex,
                     onTabChange: (index) {
-                      API.get().groups().catchError(
-                          (e) {}); // ignore the error. probably change this later
+                      API.get().groups().catchError((e) {});
                       setState(() {
                         _selectedIndex = index;
                       });
@@ -80,7 +90,31 @@ class _BaseLayoutState extends State<BaseLayout> {
             icon: Icon(Icons.logout, color: Colors.grey[600])),
         IconButton(
             padding: EdgeInsets.zero,
-            onPressed: () {},
+            onPressed: () async {
+              ClipboardData? cdata = await Clipboard.getData(Clipboard.kTextPlain);
+              if (cdata == null ||
+                  cdata.text == null ||
+                  cdata.text!.isEmpty ||
+                  cdata.text!.length != 36) {
+                return MDialog.okDialog(
+                    context, "Copy an invite code to your clipboard.");
+              }
+              try {
+                await API.post().join(cdata.text!);
+                await API.get().groups();
+
+                // Refresh page
+                setState(() {
+                  _pages = const [HomePage(), MyGroupPage()];
+                });
+
+                MDialog.okDialog(context, "Group joined!");
+              } on SocketException {
+                MDialog.noConnection(context);
+              } on HttpException {
+                MDialog.okDialog(context, "Unknown or invalid invite code.");
+              }
+            },
             icon: Icon(Icons.add_box_outlined, color: Colors.grey[600])),
         const Spacer()
       ],

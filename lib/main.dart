@@ -46,7 +46,7 @@ void main() async {
             if (snap.data == null) {
               return const LoadPage();
             }
-            return const BaseLayout();
+            return BaseLayout();
           })));
 }
 

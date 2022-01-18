@@ -7,7 +7,9 @@ import '../dialog.dart';
 
 /// App bar and bottom nav bar base with a center display
 class BaseLayout extends StatefulWidget {
-  const BaseLayout({Key? key}) : super(key: key);
+  BaseLayout({Key? key}) : super(key: key);
+
+  final List<Widget> _pages = [const HomePage(), const MyGroupPage()];
 
   @override
   _BaseLayoutState createState() => _BaseLayoutState();
@@ -15,14 +17,13 @@ class BaseLayout extends StatefulWidget {
 
 class _BaseLayoutState extends State<BaseLayout> {
   int _selectedIndex = 0;
-  final List<Widget> _pages = [const HomePage(), const MyGroupPage()];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: _appBar(),
         bottomNavigationBar: _bottomNavigationBar(),
-        body: _pages[_selectedIndex]);
+        body: widget._pages[_selectedIndex]);
   }
 
   Container _bottomNavigationBar() {

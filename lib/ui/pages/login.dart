@@ -166,7 +166,7 @@ class _LoginPageState extends State<LoginPage> {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString("puapp_username", username);
         prefs.setString("puapp_password", password);
-        return const BaseLayout();
+        return BaseLayout();
       } on SocketException {
         MDialog.connectionError(context);
       } on HttpException catch (e) {

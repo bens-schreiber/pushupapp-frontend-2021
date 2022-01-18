@@ -47,8 +47,8 @@ abstract class MDialog {
 
   /// Alert with a "Yes" or "No" option
   /// @param future and @param onPressed ran on the "Yes" option
-  static void confirmationDialog(BuildContext context, String message, Function future,
-      Function onPressed) {
+  static void confirmationDialog(BuildContext context, String message,
+      Function future) {
     showDialog(
         context: context,
         builder: (context) {
@@ -59,12 +59,7 @@ abstract class MDialog {
                 TextButton(
                     child: const Text("Yes"),
                     onPressed: () {
-                      future().then((snap) {
-                        API.get().groups().then((snap) {
-                          onPressed();
-                        }).catchError((e) => e);
-                      });
-                      Navigator.of(context).pop();
+                      future().then((value) => Navigator.of(context).pop());
                     }),
                 TextButton(
                     child: const Text("No"),
@@ -75,8 +70,8 @@ abstract class MDialog {
         });
   }
 
-  static void confirmationDialogNoRefresh(BuildContext context, String message,
-      Function future, Function onPressed) {
+  static void confirmationDialogWithTask(BuildContext context, String message,
+      Function future, Function task) {
     showDialog(
         context: context,
         builder: (context) {
@@ -87,7 +82,7 @@ abstract class MDialog {
                 TextButton(
                     child: const Text("Yes"),
                     onPressed: () {
-                      future().then((value) => onPressed());
+                      future().then((value) => task());
                       Navigator.of(context).pop();
                     }),
                 TextButton(

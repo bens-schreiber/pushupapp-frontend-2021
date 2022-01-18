@@ -14,29 +14,23 @@ class MyGroupPage extends StatefulWidget {
 }
 
 class _MyGroupPageState extends State<MyGroupPage> {
-  late List<Group> _groups;
-
-  @override
-  void initState() {
-    super.initState();
-    _groups = API.groups;
-  }
-
   @override
   Widget build(BuildContext context) {
-    List<Widget> child =
-        _groups.where((group) => API.username == group.creator).isNotEmpty
-            ? _displayGroup()
-            : displayCreate();
-
-    return Scaffold(
+    return API.builder((groups) {
+      return Scaffold(
         body: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: child));
+            children: groups
+                    .where((group) => API.username == group.creator)
+                    .isNotEmpty
+                ? _displayGroup(groups)
+                : displayCreate(groups)),
+      );
+    });
   }
 
-  List<Widget> displayCreate() {
+  List<Widget> displayCreate(List<Group> groups) {
     return [
       const Padding(
           padding: EdgeInsets.only(top: 35.0, left: 25),
@@ -54,12 +48,10 @@ class _MyGroupPageState extends State<MyGroupPage> {
                   padding: EdgeInsets.zero,
                   icon: const Icon(Icons.add, size: 100, color: Colors.white),
                   onPressed: () => MDialog.confirmationDialog(
-                          context,
-                          "Are you sure you'd like to create a group?",
-                          () => API.post().create(), () {
-                        setState(() {
-                          _groups = API.groups;
-                        });
+                          context, "Are you sure you'd like to create a group?",
+                          () async {
+                        await API.post().create();
+                        await API.get().groups();
                       })),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5),
@@ -68,7 +60,7 @@ class _MyGroupPageState extends State<MyGroupPage> {
     ];
   }
 
-  List<Widget> _displayGroup() {
+  List<Widget> _displayGroup(List<Group> groups) {
     return [
       const Padding(
           padding: EdgeInsets.only(top: 35.0, left: 25, bottom: 10),
@@ -79,7 +71,7 @@ class _MyGroupPageState extends State<MyGroupPage> {
                   fontWeight: FontWeight.bold))),
       Padding(
           padding: const EdgeInsets.only(bottom: 25, left: 25, right: 25),
-          child: _creatorButtons()),
+          child: _creatorButtons(groups)),
       Padding(
           padding: const EdgeInsets.only(left: 25, right: 25),
           child: Container(
@@ -88,12 +80,12 @@ class _MyGroupPageState extends State<MyGroupPage> {
                   borderRadius: BorderRadius.circular(5)),
               child: SingleChildScrollView(
                   child: Column(
-                children: _groupWidgets(),
+                children: _groupWidgets(groups),
               )))),
     ];
   }
 
-  Widget _creatorButtons() {
+  Widget _creatorButtons(List<Group> groups) {
     return Container(
         width: 400,
         height: 70,
@@ -118,7 +110,7 @@ class _MyGroupPageState extends State<MyGroupPage> {
                       size: 45, color: Colors.grey[600]),
                   onPressed: () {
                     Clipboard.setData(ClipboardData(
-                            text: _groups
+                            text: groups
                                 .where((group) => API.username == group.creator)
                                 .first
                                 .id))
@@ -135,21 +127,19 @@ class _MyGroupPageState extends State<MyGroupPage> {
                       icon: const Icon(Icons.block_rounded,
                           size: 50, color: Colors.red),
                       onPressed: () {
-                        MDialog.confirmationDialog(
-                            context,
+                        MDialog.confirmationDialog(context,
                             "Are you sure you'd like to disband the group?",
-                            () => API.del().disband(), () {
-                          setState(() {
-                            _groups = API.groups;
-                          });
+                            () async {
+                          await API.del().disband();
+                          await API.get().groups();
                         });
                       }))
             ])));
   }
 
-  List<Widget> _groupWidgets() {
+  List<Widget> _groupWidgets(List<Group> groups) {
     List<Widget> _groupWidgets = List.empty(growable: true);
-    Group group = _groups.where((g) => g.creator == API.username).first;
+    Group group = groups.where((g) => g.creator == API.username).first;
     _groupWidgets = group.members
         .where((member) => member != API.username)
         .map((member) => Padding(
@@ -179,11 +169,9 @@ class _MyGroupPageState extends State<MyGroupPage> {
                                 context,
                                 "Are you sure you'd like to kick " +
                                     member +
-                                    "?",
-                                () => API.del().kick(member), () {
-                              setState(() {
-                                _groups = API.groups;
-                              });
+                                    "?", () async {
+                              await API.del().kick(member);
+                              await API.get().groups();
                             });
                           }))
                 ]))))

@@ -80,7 +80,7 @@ class _BaseLayoutState extends State<BaseLayout> {
         IconButton(
             padding: const EdgeInsets.only(left: 25),
             onPressed: () {
-              MDialog.confirmationDialogNoRefresh(
+              MDialog.confirmationDialogWithTask(
                   context,
                   "Are you sure you want to sign out?",
                   () => API.logout(),
@@ -102,11 +102,6 @@ class _BaseLayoutState extends State<BaseLayout> {
               try {
                 await API.post().join(cdata.text!);
                 await API.get().groups();
-
-                // Refresh page
-                setState(() {
-                  _pages = const [HomePage(), MyGroupPage()];
-                });
 
                 MDialog.okDialog(context, "Group joined!");
               } on SocketException {

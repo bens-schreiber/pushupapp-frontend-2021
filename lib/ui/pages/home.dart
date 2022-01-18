@@ -14,53 +14,47 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late int _displayingIndex;
-  late List<Group> _groups;
-
-  @override
-  void initState() {
-    super.initState();
-    _groups = API.groups;
-    _displayingIndex = _groups.length > 2 ? 1 : 0;
-  }
+  int _displayingIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         // Main homepage contents
-        body: Column(
-            // Column Alignment
+        body: API.builder((groups) => Column(
+          // Column Alignment
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.max,
 
             // Main body of home page
-            children: _groups.isEmpty
+            children: groups.isEmpty
                 ? _joinGroup()
                 : [
-                    // Centered Flip Coin widget
-                    CenterDisplay(
-                        groups: _groups,
-                        onPageUpdated: _onPageUpdated,
-                        index: _displayingIndex),
+              // Centered Flip Coin widget
+              CenterDisplay(
+                  groups: groups,
+                  onPageUpdated: _onPageUpdated,
+                  index: _displayingIndex),
 
-                    // Pushup button widget
-                    Padding(
-                        padding:
-                            const EdgeInsets.only(top: 5, left: 10, right: 10),
-                        child: GlowingButton(
-                            text: API.username ==
-                                    _groups[_displayingIndex].coinHolder
-                                ? "Click to complete your pushups!"
-                                : _groups[_displayingIndex].coinHolder +
-                                    " is the coin holder",
-                            onPressed: _updateCoin)),
+              // Pushup button widget
+              Padding(
+                  padding:
+                  const EdgeInsets.only(top: 5, left: 10, right: 10),
+                  child: GlowingButton(
+                      text: API.username ==
+                          groups[_displayingIndex].coinHolder
+                          ? "Click to complete your pushups!"
+                          : groups[_displayingIndex].coinHolder +
+                          " is the coin holder",
+                      onPressed:_updateCoin)),
 
-                    // Group information widget
-                    Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: GroupInfo(_groups[_displayingIndex]),
-                    )
-                  ]));
+              // Group information widget
+              Padding(
+                padding: const EdgeInsets.all(10),
+                child: GroupInfo(groups[_displayingIndex]),
+              )
+            ]))
+
+    );
   }
 
   List<Widget> _joinGroup() {
@@ -74,7 +68,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _updateCoin() {
-    Group _g = _groups[_displayingIndex];
+    Group _g = API.groups[_displayingIndex];
     if (API.username != _g.coinHolder) {
       return;
     }
@@ -90,9 +84,6 @@ class _HomePageState extends State<HomePage> {
                       Navigator.of(c).pop();
                       await API.post().coin(_g.id);
                       await API.get().groups();
-                      setState(() {
-                        _groups = API.groups;
-                      });
                     } on SocketException {
                       MDialog.noConnection(context);
                     } on HttpException {

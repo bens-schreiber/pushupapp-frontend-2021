@@ -91,7 +91,8 @@ class _BaseLayoutState extends State<BaseLayout> {
         IconButton(
             padding: EdgeInsets.zero,
             onPressed: () async {
-              ClipboardData? cdata = await Clipboard.getData(Clipboard.kTextPlain);
+              ClipboardData? cdata =
+                  await Clipboard.getData(Clipboard.kTextPlain);
               if (cdata == null ||
                   cdata.text == null ||
                   cdata.text!.isEmpty ||

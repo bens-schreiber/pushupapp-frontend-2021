@@ -3,3 +3,4 @@ export 'group_info.dart';
 export 'button.dart';
 export '../dialog.dart';
 export 'pledge.dart';
+export 'index_indicator.dart';

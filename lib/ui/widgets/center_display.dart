@@ -43,7 +43,7 @@ class _CenterDisplayState extends State<CenterDisplay> {
     return Column(children: [
       FittedBox(
           child: SizedBox(
-              height: 360,
+              height: 330,
               width: 250,
               child: PageView(
                   controller: _pageController,

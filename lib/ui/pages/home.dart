@@ -30,10 +30,19 @@ class _HomePageState extends State<HomePage> {
                 ? _joinGroup()
                 : [
               // Centered Flip Coin widget
-              CenterDisplay(
-                  groups: groups,
-                  onPageUpdated: _onPageUpdated,
-                  index: _displayingIndex),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 35),
+                    child: CenterDisplay(
+                        groups: groups,
+                        onPageUpdated: _onPageUpdated,
+                        index: _displayingIndex),
+                  ),
+                  IndexIndicator(index: _displayingIndex,)
+                ],
+              ),
 
               // Pushup button widget
               Padding(

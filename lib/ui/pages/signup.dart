@@ -140,7 +140,6 @@ class _SignupPageState extends State<SignupPage> {
       }
 
       try {
-
         // Grab API token and cache user details
         await API.initialize(username, password);
 
@@ -152,10 +151,10 @@ class _SignupPageState extends State<SignupPage> {
         prefs.setString("puapp_password", password);
 
         return BaseLayout();
-      } on SocketException {
-          return MDialog.noConnection(context).then((_) => const SignupPage());
       } on HttpException {
         return MDialog.internalError(context).then((_) => const SignupPage());
+      } on Exception {
+        return MDialog.noConnection(context).then((_) => const SignupPage());
       }
     });
   }

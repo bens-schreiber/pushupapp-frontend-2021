@@ -7,9 +7,10 @@ class LoadPage extends StatefulWidget {
   /// Push a load screen to the view.
   /// On the completion of the toProcess async function, push page to the
   /// returned value.
-  static void push(BuildContext context, Function(BuildContext context) toProcess) {
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (_) => LoadPage(toProcess: toProcess)));
+  static void push(
+      BuildContext context, Function(BuildContext context) toProcess) {
+    Navigator.pushReplacement(context,
+        MaterialPageRoute(builder: (_) => LoadPage(toProcess: toProcess)));
   }
 
   @override
@@ -22,9 +23,10 @@ class _LoadPageState extends State<LoadPage> {
     super.initState();
 
     if (widget.toProcess != null) {
-      Future.delayed(const Duration(milliseconds: 200)).then((_) => (widget.toProcess!(context) as Future<dynamic>).then((value) =>
-          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => value))
-      ));
+      Future.delayed(const Duration(milliseconds: 200)).then((_) =>
+          (widget.toProcess!(context) as Future<dynamic>).then((value) =>
+              Navigator.of(context)
+                  .pushReplacement(MaterialPageRoute(builder: (_) => value))));
     }
   }
 

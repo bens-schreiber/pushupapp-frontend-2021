@@ -135,7 +135,6 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _login(String username, String password) async {
-
     try {
       await API.initialize(username, password);
     } on SocketException {
@@ -160,7 +159,6 @@ class _LoginPageState extends State<LoginPage> {
 
     LoadPage.push(context, (context) async {
       try {
-
         await API.get().groups();
 
         /// Save user login details in phone for easier future login
@@ -168,10 +166,10 @@ class _LoginPageState extends State<LoginPage> {
         prefs.setString("puapp_username", username);
         prefs.setString("puapp_password", password);
         return BaseLayout();
-      } on SocketException {
-          MDialog.connectionError(context).then((_) => const LoginPage());
       } on HttpException {
-          return MDialog.internalError(context).then((_) => const LoginPage());
+        return MDialog.internalError(context).then((_) => const LoginPage());
+      } on Exception {
+        MDialog.connectionError(context).then((_) => const LoginPage());
       }
     });
   }

@@ -19,9 +19,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return API.builder((groups) =>
-        Scaffold(
-            body: Column(
+    return API.builder((groups) => Scaffold(
+        body: Column(
             // Column Alignment
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.max,
@@ -42,9 +41,10 @@ class _HomePageState extends State<HomePage> {
                               index: _displayingIndex),
                         ),
                         IndexIndicator(
+                          size: groups.length,
                           index: _displayingIndex,
                         )
-                      ],
+                      ]
                     ),
 
                     // Pushup button widget
@@ -68,39 +68,46 @@ class _HomePageState extends State<HomePage> {
   }
 
   _joinGroup() {
-    return [ Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Text("Click the icon to join a group", style: TextStyle(color: Colors.grey[600], fontSize: 20)),
-        Center(
-          child: IconButton(
-              padding: EdgeInsets.zero,
-              onPressed: () async {
-                ClipboardData? cdata =
-                await Clipboard.getData(Clipboard.kTextPlain);
-                if (cdata == null ||
-                    cdata.text == null ||
-                    cdata.text!.isEmpty ||
-                    cdata.text!.length != 36) {
-                  return MDialog.okDialog(
-                      context, "Copy an invite code to your clipboard.");
-                }
-                try {
-                  await API.post().join(cdata.text!);
-                  await API.get().groups();
+    return [
+      Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text("Click the icon to join a group",
+              style: TextStyle(color: Colors.grey[600], fontSize: 20)),
+          Center(
+            child: IconButton(
+                padding: EdgeInsets.zero,
+                onPressed: () async {
+                  ClipboardData? cdata =
+                      await Clipboard.getData(Clipboard.kTextPlain);
+                  if (cdata == null ||
+                      cdata.text == null ||
+                      cdata.text!.isEmpty ||
+                      cdata.text!.length != 36) {
+                    return MDialog.okDialog(
+                        context, "Copy an invite code to your clipboard.");
+                  }
+                  try {
+                    await API.post().join(cdata.text!);
+                    await API.get().groups();
 
-                  MDialog.okDialog(context, "Group joined!");
-                } on SocketException {
-                  MDialog.noConnection(context);
-                } on HttpException {
-                  MDialog.okDialog(context, "Unknown or invalid invite code.");
-                }
-              },
-              icon: Icon(Icons.add_box_outlined, color: Colors.grey[600], size: 30,)),
-        ),
-      ],
-    )
+                    MDialog.okDialog(context, "Group joined!");
+                  } on HttpException {
+                    MDialog.okDialog(
+                        context, "Unknown or invalid invite code.");
+                  } on Exception {
+                    MDialog.noConnection(context);
+                  }
+                },
+                icon: Icon(
+                  Icons.add_box_outlined,
+                  color: Colors.grey[600],
+                  size: 30,
+                )),
+          ),
+        ],
+      )
     ];
   }
 

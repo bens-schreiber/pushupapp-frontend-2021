@@ -105,10 +105,10 @@ class _BaseLayoutState extends State<BaseLayout> {
                 await API.get().groups();
 
                 MDialog.okDialog(context, "Group joined!");
-              } on SocketException {
-                MDialog.noConnection(context);
               } on HttpException {
                 MDialog.okDialog(context, "Unknown or invalid invite code.");
+              } on Exception {
+                MDialog.noConnection(context);
               }
             },
             icon: Icon(Icons.add_box_outlined, color: Colors.grey[600])),

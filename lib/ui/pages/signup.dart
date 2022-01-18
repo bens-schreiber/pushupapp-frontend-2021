@@ -9,7 +9,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'index.dart';
 import 'package:pushupapp/api/httpexceptions.dart';
 
-
 /// Sign up account page
 class SignupPage extends StatefulWidget {
   const SignupPage({Key? key}) : super(key: key);
@@ -43,7 +42,7 @@ class _SignupPageState extends State<SignupPage> {
                       const Icon(Icons.lock_outline,
                           size: 30, color: Color(0xffA6B0BD)),
                       "Enter a "
-                          "Password",
+                      "Password",
                       true,
                       password),
                   Container(
@@ -51,9 +50,8 @@ class _SignupPageState extends State<SignupPage> {
                       child: GlowingButton(
                           text: "Create account",
                           height: 60,
-                          onPressed: () =>
-                              _register(
-                                  username.value.text, password.value.text))),
+                          onPressed: () => _register(
+                              username.value.text, password.value.text))),
                   _haveAccount(),
                   _loginButton(),
                   _createdBy()
@@ -74,11 +72,10 @@ class _SignupPageState extends State<SignupPage> {
 
   Widget _loginButton() {
     return TextButton(
-        onPressed: () =>
-        {
-          Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => const LoginPage()))
-        },
+        onPressed: () => {
+              Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => const LoginPage()))
+            },
         child: const Text("LOGIN",
             style: TextStyle(
                 color: Color(0xFF008FFF),
@@ -134,22 +131,6 @@ class _SignupPageState extends State<SignupPage> {
     LoadPage.push(context, (context) async {
       try {
         await API.newUser(username, password);
-
-        try {
-          // Grab API token and cache user details
-          await API.initialize(username, password);
-
-          await API.get().groups(); // Grab page information
-
-          // Save user login details in phone for easier future login
-          SharedPreferences prefs = await SharedPreferences.getInstance();
-          prefs.setString("puapp_username", username);
-          prefs.setString("puapp_password", password);
-        } on Exception {
-          rethrow;
-        }
-      } on SocketException {
-        MDialog.noConnection(context);
       } on HttpException catch (e) {
         if (e.status == Status.badRequest) {
           MDialog.okDialog(context, "Username already exists");
@@ -157,7 +138,25 @@ class _SignupPageState extends State<SignupPage> {
           MDialog.internalError(context);
         }
       }
+
+      try {
+
+        // Grab API token and cache user details
+        await API.initialize(username, password);
+
+        await API.get().groups(); // Grab page information
+
+        // Save user login details in phone for easier future login
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString("puapp_username", username);
+        prefs.setString("puapp_password", password);
+
+        return BaseLayout();
+      } on SocketException {
+          return MDialog.noConnection(context).then((_) => const SignupPage());
+      } on HttpException {
+        return MDialog.internalError(context).then((_) => const SignupPage());
+      }
     });
   }
-
 }

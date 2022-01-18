@@ -160,6 +160,7 @@ class _LoginPageState extends State<LoginPage> {
 
     LoadPage.push(context, (context) async {
       try {
+
         await API.get().groups();
 
         /// Save user login details in phone for easier future login
@@ -168,11 +169,9 @@ class _LoginPageState extends State<LoginPage> {
         prefs.setString("puapp_password", password);
         return BaseLayout();
       } on SocketException {
-        MDialog.connectionError(context);
-      } on HttpException catch (e) {
-        if (e.status != Status.notFound) {
-          MDialog.internalError(context);
-        }
+          MDialog.connectionError(context).then((_) => const LoginPage());
+      } on HttpException {
+          return MDialog.internalError(context).then((_) => const LoginPage());
       }
     });
   }

@@ -201,6 +201,9 @@ class _Get {
         .catchError((err) => throw err);
 
     if (res.statusCode != 200) {
+      if (res.statusCode == 404) {
+        return HttpException(res.statusCode).status;
+      }
       throw HttpException(res.statusCode);
     }
 

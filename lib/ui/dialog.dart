@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:pushupapp/api/requests.dart';
 
 /// Provides popup alert notifications
 abstract class MDialog {
@@ -11,8 +10,8 @@ abstract class MDialog {
   static const String _rateLimited = "You are being ratelimited.";
 
   /// Basic dialog with a message and an "OK" button to dismiss
-  static void okDialog(BuildContext context, String message) {
-    showDialog(
+  static Future<void> okDialog(BuildContext context, String message) async {
+    await showDialog(
         context: context,
         builder: (context) {
           return CupertinoAlertDialog(
@@ -28,21 +27,21 @@ abstract class MDialog {
         });
   }
 
-  static void connectionError(context) {
-    okDialog(context, _connectionError);
+  static Future<void> connectionError(context) {
+    return okDialog(context, _connectionError);
   }
-  static void internalError(context) {
-    okDialog(context, _internalError);
+  static Future<void> internalError(context) {
+    return okDialog(context, _internalError);
   }
-  static void invalidCredentials(context) {
-    okDialog(context, _invalidCredentials);
+  static Future<void> invalidCredentials(context) {
+    return okDialog(context, _invalidCredentials);
   }
-  static void noConnection(context) {
-    okDialog(context, _noConnection);
+  static Future<void> noConnection(context) {
+    return okDialog(context, _noConnection);
   }
 
-  static void rateLimited(context) {
-    okDialog(context, _rateLimited);
+  static Future<void> rateLimited(context) {
+    return okDialog(context, _rateLimited);
   }
 
   /// Alert with a "Yes" or "No" option
